@@ -275,7 +275,7 @@ app.post('/createPlaylist', async (req, res) => {
         if (result.insertedId) {
             res.json({ success: true });
         } else {
-            res.json({ success: false, message: 'Folder creation failed!' });
+            res.json({ success: false, message: 'Playlist creation failed!' });
         }
 
     } catch (error) {
@@ -305,30 +305,120 @@ app.get('/getPlaylists', async (req, res) => {
     }
 });
 
-app.get('/getFolderContents', async (req, res) => {
+app.post('/addMediaToPlaylist', uploadMiddleware, async (req, res) => {
+    const { playlistName, selectedFiles, folderName, delay } = req.body;
+    console.log(req.body);
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const collection = db.collection('playlist');
+
+        // Remove empty delay times
+        length = delay.length;
+        var delayIntArray = [];
+  
+        for (var i = 0; i < length; i++)
+            if (delay[i] != "")
+            delayIntArray.push(parseInt(delay[i]));
+
+        // Find the playlist document by name
+        const playlistDocument = await collection.findOne({ playlistname: playlistName });
+        if (!playlistDocument) {
+            res.json({ success: false, message: 'Playlist not found' });
+            return;
+        }
+
+        const filePaths = selectedFiles.map((fileName, index) => ({
+            fileName,
+            filePath: path.join('uploads', folderName, fileName),
+            delay: delayIntArray[index]
+        }));
+
+        // Update the content array in the playlist document with filePaths
+        const updatedContent = playlistDocument.content.concat(filePaths);
+
+        // Update the document with the new content
+        const result = await collection.updateOne(
+            { playlistname: playlistName },
+            { $set: { content: updatedContent } }
+        );
+
+        if (result.modifiedCount > 0) {
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: 'Failed to add media to playlist' });
+        }
+    } catch (error) {
+        console.error('Error adding media to playlist:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    } finally {
+        client.close();
+    }
+});
+
+app.get('/getPlaylistContents', async (req, res) => {
     const playlistName = req.query.playlistName;
     try {
         await client.connect();
         const db = client.db(dbName);
-        const collection = db.collection('folder');
+        const collection = db.collection('playlist');
 
         // Find the document for the folder using folderName
         const playlistDocument = await collection.findOne({ playlistname: playlistName });
         if (!playlistDocument) {
-            res.status(404).json({ error: 'Folder not found' });
+            res.status(404).json({ error: 'Playlist not found' });
             return;
         }
 
         // Extract the contents and delayTimes from the document
         const contents = playlistDocument.content;
-        const delayTimes = contents.map(content => content.delay);
+        //const delayTimes = contents.map(content => content.delay);
 
 
         // Return the contents and delayTimes3
-        res.json({ contents, delayTimes });
+        res.json({ contents });
     } catch (error) {
         console.error('Error fetching folder contents:', error);
         res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        client.close();
+    }
+});
+
+app.post('/deleteMedia', uploadMiddleware, async (req, res) => {
+    const { playlistname, filename } = req.body;
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const collection = db.collection('playlist');
+
+        // Update the document to remove the content
+        const result = await collection.updateOne(
+            { playlistname: playlistname },
+            { $pull: { content: { fileName: filename } } }
+        );
+
+    } catch (error) {
+        console.error('Delete error:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    } finally {
+        client.close();
+    }
+});
+
+app.post('/deletePlaylist', uploadMiddleware, async (req, res) => {
+    const { playlistname } = req.body;
+    try {
+        // Remove playlist from MongoDB collection
+        await client.connect();
+        const db = client.db(dbName);
+        const collection = db.collection('playlist');
+        await collection.deleteOne({ playlistname: playlistname });
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete folder error:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
     } finally {
         client.close();
     }

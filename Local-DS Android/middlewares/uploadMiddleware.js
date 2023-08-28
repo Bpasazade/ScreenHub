@@ -28,18 +28,18 @@ const uploadMiddleware = (req, res, next) => {
     const errors = [];
 
     // Validate file types and sizes
-    files.forEach((file) => {
-      const allowedTypes = ['image/jpeg', 'image/png'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+    // files.forEach((file) => {
+    //   const allowedTypes = ['image/jpeg', 'image/png'];
+    //   const maxSize = 5 * 1024 * 1024; // 5MB
 
-      if (!allowedTypes.includes(file.mimetype)) {
-        errors.push(`Invalid file type: ${file.originalname}`);
-      }
+    //   if (!allowedTypes.includes(file.mimetype)) {
+    //     errors.push(`Invalid file type: ${file.originalname}`);
+    //   }
 
-      if (file.size > maxSize) {
-        errors.push(`File too large: ${file.originalname}`);
-      }
-    });
+    //   if (file.size > maxSize) {
+    //     errors.push(`File too large: ${file.originalname}`);
+    //   }
+    // });
 
     // Handle validation errors
     if (errors.length > 0) {
