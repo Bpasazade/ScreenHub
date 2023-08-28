@@ -56,7 +56,7 @@ exports.signup = (req, res) => {
           return;
         }
 
-        user.roles = [role._id];
+        user.roles = [role.name];
         user.save(err => {
           if (err) {
             res.status(500).send({ message: err });
@@ -118,4 +118,16 @@ exports.signin = (req, res) => {
         accessToken: token
       });
     });
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    const targetRoleId = '64eb704c457376db282ca9be';
+    console.log(users.filter(user => user.roles.some(roleId => roleId.toString() === targetRoleId)));
+    const returnUsers = users.filter(user => user.roles.some(roleId => roleId.toString() === targetRoleId));
+    res.status(200).json(returnUsers);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
 };

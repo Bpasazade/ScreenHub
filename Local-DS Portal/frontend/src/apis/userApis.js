@@ -13,8 +13,3 @@ export async function signIn(email, password) {
     throw error;
   }
 }
-
-export async function getUsers() {
-    const response = await fetch('/api/test/all');
-    const data = response.json();
-}

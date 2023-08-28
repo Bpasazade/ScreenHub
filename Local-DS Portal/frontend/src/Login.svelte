@@ -1,7 +1,7 @@
 <!-- src/Login.svelte -->
 <script>
     import RubuPlusLogo from './assets/logo.png'
-    import { signIn } from "./apis/api.js";
+    import { signIn } from "./apis/userApis.js";
     import { navigate } from 'svelte-routing';
 
     let email = "";
