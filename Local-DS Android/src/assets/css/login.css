@@ -1,0 +1,46 @@
+.login-container {
+    display: flex;
+    min-height: 100vh;
+}
+.login-left {
+    background-color: #1C2731;
+    color: white;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+.login-right {
+    flex: 2;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#emailInputGroup, #passwordInputGroup {
+  border-radius: 0.25rem;
+  border: solid 1px #25324B14;
+}
+#inputEmail, #inputPassword {
+  border: none;
+  display: flex;
+  align-items: center;
+  height: 50px;
+}
+#inputEmail::placeholder, #inputPassword::placeholder {
+  font-weight: 400;
+  font-size: 14px;
+  color: #25324B !important;
+}
+.form-control:focus {
+  box-shadow: none;
+  font-weight: 400;
+  color: #25324B !important;
+}
+#emailAddon, #passwordAddon {
+  border-right: none;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+}
