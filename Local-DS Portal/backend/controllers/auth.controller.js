@@ -18,8 +18,11 @@ exports.signup = (req, res) => {
     companyName: req.body.companyName,
     companyAddress: req.body.companyAddress,
     numberOfScreens: req.body.numberOfScreens,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypt.hashSync(req.body.password, 8),
   });
+
+  console.log(req.body);
+  console.log(req.body.roles);
 
   user.save((err, user) => {
     if (err) {
@@ -56,7 +59,7 @@ exports.signup = (req, res) => {
           return;
         }
 
-        user.roles = [role.name];
+        user.roles = [role._id];
         user.save(err => {
           if (err) {
             res.status(500).send({ message: err });
@@ -67,7 +70,8 @@ exports.signup = (req, res) => {
         });
       });
     }
-  });
+  }
+  );
 };
 
 exports.signin = (req, res) => {

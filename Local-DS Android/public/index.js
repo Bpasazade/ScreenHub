@@ -7,30 +7,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const fileInput = document.getElementById("fileInput");
     //const delayInputs = document.getElementById("delayInputs");
 
-    fileInput.addEventListener("change", function (event) {
-        const files = event.target.files;
-        //delayInputs.innerHTML = ""; // Clear previous delay inputs
+    // fileInput.addEventListener("change", function (event) {
+    //     const files = event.target.files;
+    //     delayInputs.innerHTML = ""; // Clear previous delay inputs
 
-        // Add delay time input for each selected file
-        // for (let i = 0; i < files.length; i++) {
-        //     const file = files[i];
-        //     const delayInput = document.createElement("input");
+    //     Add delay time input for each selected file
+    //     for (let i = 0; i < files.length; i++) {
+    //         const file = files[i];
+    //         const delayInput = document.createElement("input");
 
-        //     const delayLabel = document.createElement("label");
-        //     delayLabel.textContent = "Delay Time for: " + file.name;
-        //     delayLabel.htmlFor = "fileDelay";
-        //     delayInputs.appendChild(delayLabel);
+    //         const delayLabel = document.createElement("label");
+    //         delayLabel.textContent = "Delay Time for: " + file.name;
+    //         delayLabel.htmlFor = "fileDelay";
+    //         delayInputs.appendChild(delayLabel);
 
-        //     delayInput.classList.add("form-control");
-        //     delayInput.classList.add("delay-input");
-        //     delayInput.id = "fileDelay";
-        //     delayInput.name = "fileDelay";
-        //     delayInput.type = "number";
-        //     delayInput.name = `delay_${i}`; // Associate delay input with the file
-        //     delayInput.placeholder = "Delay Time";
-        //     delayInputs.appendChild(delayInput);
-        // }
-    });
+    //         delayInput.classList.add("form-control");
+    //         delayInput.classList.add("delay-input");
+    //         delayInput.id = "fileDelay";
+    //         delayInput.name = "fileDelay";
+    //         delayInput.type = "number";
+    //         delayInput.name = `delay_${i}`; // Associate delay input with the file
+    //         delayInput.placeholder = "Delay Time";
+    //         delayInputs.appendChild(delayInput);
+    //     }
+    // });
 
     createFolderForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -354,9 +354,6 @@ function displayInModal(fileUrl, fileType, fileName) {
 }
 
 async function deleteFile(formData) {
-    //for (var pair of formData.entries()) {
-    //    console.log(pair[0]+ ', ' + pair[1]); 
-    //}
     try {
         const response = await fetch('/deleteFile', {
             method: 'POST',

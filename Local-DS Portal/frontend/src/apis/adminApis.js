@@ -12,7 +12,8 @@ export async function registerUser(name,
                                    companyName, 
                                    companyAddress, 
                                    numberOfScreens, 
-                                   password) {
+                                   password,
+                                   roles) {
     try {
         const response = await axios.post('http://localhost:3000/api/auth/signup', { name, 
                                                                                      lastname,  
@@ -26,7 +27,8 @@ export async function registerUser(name,
                                                                                      companyName, 
                                                                                      companyAddress, 
                                                                                      numberOfScreens, 
-                                                                                     password });
+                                                                                     password,
+                                                                                     roles});
 
         if (response.status !== 200) {
             throw new Error(response.data.message);

@@ -13,3 +13,21 @@ export async function signIn(email, password) {
     throw error;
   }
 }
+
+export async function getDashboard(accessToken) {
+  try {
+    const headers = {
+      'x-access-token': accessToken,
+    };
+
+    const response = await axios.get('http://localhost:3000/api/test/user', { headers });
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

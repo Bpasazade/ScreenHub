@@ -15,18 +15,15 @@
       event.preventDefault();
       try {
         const userData = await signIn(email, password);
-        console.log(userData);
-        // Handle successful login
+        const accessToken = userData.accessToken;
+        localStorage.setItem("accessToken", accessToken);
         if (userData.roles.includes("ROLE_ADMIN")) {
-            console.log("Admin user");
-            // Navigate to the AdminHome page
-            //window.location.href = '/adminHome';
-            navigate('/adminHome');
+            navigate('/adminDashboard');
         } else {
-            // Handle non-admin user
+            navigate('/userDashboard');
         }
       } catch (error) {
-      // Handle error, show error message to user
+        // Handle error, show error message to user
       }
     }
 </script>

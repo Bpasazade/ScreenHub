@@ -5,22 +5,25 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const uploadMiddleware = require('./middlewares/uploadMiddleware');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-app.use(express.static('public'));
+app.use(express.static('src'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 app.use('/', express.static(__dirname));
+app.use(cors());
 
 const mongoUrl = 'mongodb://0.0.0.0:27017';
 const dbName = 'local-ds';
 const client = new MongoClient(mongoUrl, { useUnifiedTopology: true });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile("src/templates/index.html", { root: __dirname });
+    // path.join(__dirname, 'src', 'templates/index.html')
 });
 
 app.post('/createFolder', async (req, res) => {
@@ -157,6 +160,8 @@ app.post('/uploadFiles', uploadMiddleware, async (req, res) => {
         const updatedContent = folderDocument.content.concat(
             uploadedFiles.map((file) => ({
                 fileName: file.originalname,
+                filePath: path.join('uploads', uploadFolderName, file.filename),
+                mTime: fs.statSync(path.join('uploads', uploadFolderName, file.filename)).mtime,
             }))
         );
 
@@ -177,7 +182,7 @@ app.post('/uploadFiles', uploadMiddleware, async (req, res) => {
         );
 
         if (result.modifiedCount > 0) {
-            res.redirect("/");
+            //res.redirect("/");
         } else {
             //res.json({ success: false, message: 'File upload failed!' });
         }

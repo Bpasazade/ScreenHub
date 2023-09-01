@@ -35,19 +35,13 @@
                   <span style="font-weight: 800; font-size: 32px; color: #25324B">Üye Girişi </span>
                   <span style="font-weight: 400; font-size: 32px; color: #25324B">Yapın</span>
                 </div>
-                <p style="font-weight: 400; color: #a3a3a3; font-size: 14px; font-family: 'Sofia-Pro-Light', sans-serif !important">Sisteme giriş için e-posta adresinizi giriniz.</p>
+                <p style="font-weight: 400; color: #a3a3a3; font-size: 14px; font-family: 'Sofia-Pro-Light', sans-serif !important">Sisteme giriş için sağlanılan kodu giriniz.</p>
                 <form>
                     <div class="input-group mb-3" id="emailInputGroup">
                       <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                         <img src="../assets/img/login/user.svg" alt="User Logo" width="24" />
                       </span>
-                      <input type="email" class="form-control" style="font-size: 14px;" id="inputEmail" aria-describedby="emailHelp" placeholder="E-Posta Adresi Giriniz" bind:value={email} />
-                    </div>
-                    <div class="input-group mb-3" id="passwordInputGroup">
-                      <span class="input-group-addon bg-white align-items-center d-flex" id="passwordAddon">
-                        <img src="../assets/img/login/smart-lock.svg" alt="User Logo" width="24" />
-                      </span>
-                      <input type="password" class="form-control" id="inputPassword" bind:value={password} placeholder="Şifre Giriniz"/>
+                      <input type="email" class="form-control" style="font-size: 14px;" id="inputEmail" aria-describedby="emailHelp" placeholder="Kod Giriniz" bind:value={email} />
                     </div>
                     <button type="submit" class="btn btn-primary w-100 border-0" style="height: 60px; background-color: #04A3DA; font-weight: 600;" on:click={handleLogin}>Giriş Yap</button>
                 </form>

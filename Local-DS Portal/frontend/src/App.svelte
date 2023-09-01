@@ -1,9 +1,9 @@
 <script>
   import { Router, Route } from "svelte-routing";
   import Login from './Login.svelte';
-  import AdminHome from './adminHome.svelte';
-  import AdminUserList from './adminUserList.svelte';
-  import MediaManagement from './MediaManagement.svelte';
+  import AdminDashboard from './adminDashboard.svelte';
+  import AdminAccounts from './adminAccounts.svelte';
+  import UserDashboard from './userDashboard.svelte';
 
   import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js";
 </script>
@@ -13,9 +13,9 @@
 
 <Router>
 	<Route path="/login" component={Login} />
-	<Route path="/adminHome" component={AdminHome} />
-    <Route path="/adminUserList" component={AdminUserList} />
-    <Route path="/mediaManagement" component={MediaManagement} />
+	<Route path="/adminDashboard" component={AdminDashboard} />
+    <Route path="/adminAccounts" component={AdminAccounts} />
+    <Route path="/userDashboard" component={UserDashboard} />
 </Router>
 
 <style>

@@ -15,6 +15,7 @@
     let companyAddress = "";
     let numberOfScreens = "";
     let password = "";
+    let roles = ["user"];
 
     async function handleRegisterUser(event) {
         event.preventDefault();
@@ -31,8 +32,8 @@
                                    companyName, 
                                    companyAddress, 
                                    numberOfScreens, 
-                                   password);
-          console.log(userData);
+                                   password,
+                                   roles);
           
         } catch (error) {
             // Handle error
@@ -48,19 +49,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
           <div class="modal-body">
-            <input type="text" id="name" class="form-control mb-2" placeholder="Name" bind:value={name} >
-            <input type="text" id="lastname" class="form-control mb-2" placeholder="Last Name" bind:value={lastname}>
-            <input type="text" id="degree" class="form-control mb-2" placeholder="Main User Degree" bind:value={mainUserDegree}>
+            <input type="text" id="name" class="form-control mb-2" placeholder="İsim" bind:value={name} >
+            <input type="text" id="lastname" class="form-control mb-2" placeholder="Soyisim" bind:value={lastname}>
+            <input type="text" id="degree" class="form-control mb-2" placeholder="Unvan" bind:value={mainUserDegree}>
             <input type="email" id="email" class="form-control mb-2" placeholder="Email" bind:value={email}>
-            <input type="number" id="phone" class="form-control mb-2" placeholder="Phone Number" bind:value={phoneNumber}>
-            <input type="text" id="b-name" class="form-control mb-2" placeholder="Backup User Name" bind:value={backupName}>
-            <input type="text" id="b-lastname" class="form-control mb-2" placeholder="Backup User Last Name" bind:value={backupLastname}>
-            <input type="text" id="b-degree" class="form-control mb-2" placeholder="Backup User Degree" bind:value={backUserDegree}>
-            <input type="number" id="b-phone" class="form-control mb-2" placeholder="Backup User Phone Number" bind:value={backupPhoneNumber}>
-            <input type="text" id="company-name" class="form-control mb-2" placeholder="Company Name" bind:value={companyName}>
-            <input type="text" id="company-address" class="form-control mb-2" placeholder="Company Address" bind:value={companyAddress}>
-            <input type="number" id="num-screens" class="form-control mb-2" placeholder="Number of Screens" bind:value={numberOfScreens}>
-            <input type="text" id="password" class="form-control mb-2" placeholder="Company Name" bind:value={password}>
+            <input type="number" id="phone" class="form-control mb-2" placeholder="Telefon Numarası" bind:value={phoneNumber}>
+            <input type="text" id="b-name" class="form-control mb-2" placeholder="Yedek Kullanıcı İsmi" bind:value={backupName}>
+            <input type="text" id="b-lastname" class="form-control mb-2" placeholder="Yedek Kullanıcı Soyismi" bind:value={backupLastname}>
+            <input type="text" id="b-degree" class="form-control mb-2" placeholder="Yedek Kullanıcı Unvanı" bind:value={backUserDegree}>
+            <input type="number" id="b-phone" class="form-control mb-2" placeholder="Yedek Kullanıcı Telefon Numarası" bind:value={backupPhoneNumber}>
+            <input type="text" id="company-name" class="form-control mb-2" placeholder="Şirket İsmi" bind:value={companyName}>
+            <input type="text" id="company-address" class="form-control mb-2" placeholder="Şirket Adresi" bind:value={companyAddress}>
+            <input type="number" id="num-screens" class="form-control mb-2" placeholder="Ekran Sayısı" bind:value={numberOfScreens}>
+            <input type="text" id="password" class="form-control mb-2" placeholder="Şifre" bind:value={password}>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

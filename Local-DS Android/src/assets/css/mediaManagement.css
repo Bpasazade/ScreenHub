@@ -158,3 +158,9 @@ height: 40px;
 width: 40px;
 display: block;
 }
+#playlistBtn {
+    background-color: #F6F6F6;
+    border: solid 2px #DDDDDD;
+    border-radius: 9px;
+    padding: 1.25rem;
+}
