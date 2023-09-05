@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/createFolder', async (req, res) => {
-    const { folderName } = req.body;
+    const { folderName , folderColor } = req.body;
     try {
         await client.connect();
         const db = client.db(dbName);
@@ -48,6 +48,7 @@ app.post('/createFolder', async (req, res) => {
         const result = await collection.insertOne({
             foldername: folderName,
             folderPath: folderPath,
+            folderColor: folderColor,
             content: []
         });
 
@@ -74,8 +75,9 @@ app.get('/getFolders', async (req, res) => {
         // Find all documents in the collection
         const folders = await collection.find().toArray();
         const folderNames = folders.map(folder => folder.foldername);
+        const folderColors = folders.map(folder => folder.folderColor);
 
-        res.json({ folders: folderNames });
+        res.json({ folders: folderNames, colors: folderColors });
     } catch (error) {
         console.error('Fetch folders error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -102,6 +104,7 @@ app.get('/getFolderContents', async (req, res) => {
         // Extract the contents and delayTimes from the document
         const contents = folderDocument.content;
         const delayTimes = contents.map(content => content.delay);
+        const color = folderDocument.folderColor;
 
         /*fs.readdir(folderPath, (err, contents) => {
             if (err) {
@@ -113,7 +116,7 @@ app.get('/getFolderContents', async (req, res) => {
         });*/
 
         // Return the contents and delayTimes3
-        res.json({ contents, delayTimes });
+        res.json({ contents, delayTimes, color });
     } catch (error) {
         console.error('Error fetching folder contents:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -139,11 +142,63 @@ app.get('/getUploadsBaseFiles', (req, res) => {
     });
 });
 
+// app.post('/updateFolder', uploadMiddleware, async (req, res) => {
+//     const { folderNameOptions, folderName, folderColor } = req.body;
+//     console.log(req.body);
+//     try {
+//         await client.connect();
+//         const db = client.db(dbName);
+//         const collection = db.collection('folder');
+
+//         // Find the document for the folder
+//         const folderDocument = await collection.findOne({ foldername: folderName });
+//         if (!folderDocument) {
+//             res.status(404).json({ error: 'Folder not found' });
+//             return;
+//         }
+
+//         // Update the document with the new content
+//         const result = await collection.updateOne(
+//             { foldername: folderNameOptions },
+//             { $set: { folderColor: folderColor } }
+//         );
+
+//         console.log(result.modifiedCount);
+
+//         if (result.insertedId) {
+//             res.json({ success: true });
+//         } else {
+//             res.json({ success: false, message: 'Failed to update folder' });
+//         }
+
+//     } catch (error) {
+//         console.error('Update folder error:', error);
+//         res.status(500).json({ success: false, error: 'Internal Server Error' });
+//     } finally {
+//         client.close();
+//     }
+// });
+
 app.post('/uploadFiles', uploadMiddleware, async (req, res) => {
-    //console.log(req.body);
+    console.log(req.body);
     const uploadFolderName = req.body.uploadFolderName;
     const uploadedFiles = req.files;
+    let duration = req.body.duration;
+    if(duration == null) {
+        duration = 0;
+    }
     try {
+
+        uploadedFiles.forEach((file) => {
+            const filePath = `uploads/${uploadFolderName}/${file.filename}`;
+            fs.rename(file.path, filePath, (err) => {
+              if (err) {
+                // Handle error appropriately and send an error response
+                //return res.status(500).json({ error: 'Failed to store the file' });
+              }
+            });
+        });
+        
         // Open the MongoDB connection
         await client.connect();
         const db = client.db(dbName);
@@ -162,18 +217,11 @@ app.post('/uploadFiles', uploadMiddleware, async (req, res) => {
                 fileName: file.originalname,
                 filePath: path.join('uploads', uploadFolderName, file.filename),
                 mTime: fs.statSync(path.join('uploads', uploadFolderName, file.filename)).mtime,
+                delay: duration
             }))
         );
 
-        uploadedFiles.forEach((file) => {
-            const filePath = `uploads/${uploadFolderName}/${file.filename}`;
-            fs.rename(file.path, filePath, (err) => {
-              if (err) {
-                // Handle error appropriately and send an error response
-                //return res.status(500).json({ error: 'Failed to store the file' });
-              }
-            });
-        });
+        console.log(updatedContent);
 
         // Update the document with the new content
         const result = await collection.updateOne(
@@ -181,10 +229,11 @@ app.post('/uploadFiles', uploadMiddleware, async (req, res) => {
             { $set: { content: updatedContent } }
         );
 
+
         if (result.modifiedCount > 0) {
-            //res.redirect("/");
+            res.json({ success: true, message: 'File upload successful!' });
         } else {
-            //res.json({ success: false, message: 'File upload failed!' });
+            res.status(400).json({ success: false, message: 'File upload failed!' });
         }
 
     } catch (error) {
@@ -221,6 +270,49 @@ app.post('/deleteFile', uploadMiddleware, async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     } finally {
         client.close();
+    }
+});
+
+app.get('/getFile', (req, res) => {
+    const { filename, foldername } = req.query;
+
+    // Construct the file path based on your file storage structure
+    const filePath = path.join(__dirname, 'uploads', foldername, filename);
+
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+        // Read the file content
+        const fileContent = fs.readFileSync(filePath);
+
+        // Determine the file's content type based on its extension or other criteria
+        const contentType = 'application/octet-stream'; // You may need to adjust this
+
+        // Send the file data as a JSON response
+        res.json({ content: fileContent, contentType, fileName: filename });
+    } else {
+        // Handle the case where the file does not exist
+        res.status(404).json({ error: 'File not found' });
+    }
+});
+
+app.post('/downloadFile', (req, res) => {
+    const { filename } = req.body;
+
+    console.log(req.body);
+
+    const filePath = path.join(__dirname, 'uploads', filename);
+
+    console.log(filePath);
+
+    if (fs.existsSync(filePath)) {
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.setHeader('Content-Type', 'application/octet-stream');
+
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+    } else {
+        // Handle the case where the file does not exist
+        res.status(404).send('File not found');
     }
 });
 
@@ -311,20 +403,12 @@ app.get('/getPlaylists', async (req, res) => {
 });
 
 app.post('/addMediaToPlaylist', uploadMiddleware, async (req, res) => {
-    const { playlistName, selectedFiles, folderName, delay } = req.body;
+    const { playlistName, selectedFile, folderName } = req.body;
     console.log(req.body);
     try {
         await client.connect();
         const db = client.db(dbName);
         const collection = db.collection('playlist');
-
-        // Remove empty delay times
-        length = delay.length;
-        var delayIntArray = [];
-  
-        for (var i = 0; i < length; i++)
-            if (delay[i] != "")
-            delayIntArray.push(parseInt(delay[i]));
 
         // Find the playlist document by name
         const playlistDocument = await collection.findOne({ playlistname: playlistName });
@@ -333,19 +417,17 @@ app.post('/addMediaToPlaylist', uploadMiddleware, async (req, res) => {
             return;
         }
 
-        const filePaths = selectedFiles.map((fileName, index) => ({
-            fileName,
-            filePath: path.join('uploads', folderName, fileName),
-            delay: delayIntArray[index]
-        }));
-
-        // Update the content array in the playlist document with filePaths
-        const updatedContent = playlistDocument.content.concat(filePaths);
+        // const filePath = path.join(__dirname, 'uploads', folderName, selectedFile);
+        
+        const mediaItem = { filename: selectedFile, foldername: folderName };
+        
+        // Update the content array in the playlist document with the new media item
+        playlistDocument.content.push(mediaItem);
 
         // Update the document with the new content
         const result = await collection.updateOne(
             { playlistname: playlistName },
-            { $set: { content: updatedContent } }
+            { $set: { content: playlistDocument.content } }
         );
 
         if (result.modifiedCount > 0) {
@@ -392,6 +474,7 @@ app.get('/getPlaylistContents', async (req, res) => {
 
 app.post('/deleteMedia', uploadMiddleware, async (req, res) => {
     const { playlistname, filename } = req.body;
+    console.log(req.body);
     try {
         await client.connect();
         const db = client.db(dbName);
@@ -400,7 +483,7 @@ app.post('/deleteMedia', uploadMiddleware, async (req, res) => {
         // Update the document to remove the content
         const result = await collection.updateOne(
             { playlistname: playlistname },
-            { $pull: { content: { fileName: filename } } }
+            { $pull: { content: { filename: filename } } }
         );
 
     } catch (error) {

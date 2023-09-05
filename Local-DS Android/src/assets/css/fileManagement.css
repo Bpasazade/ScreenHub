@@ -77,6 +77,10 @@ td {
     vertical-align: middle !important;
 }
 
+.fileDes {
+    width: fit-content;
+}
+
 tr:hover > .fileDesc {
     text-align: left;
     border-width: 2px 0; 
@@ -88,7 +92,7 @@ tr:hover > .fileDesc {
 td, th {
     padding: 0.60rem !important;
     text-align: left;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     position: relative;
 }
@@ -175,6 +179,46 @@ display: block;
     display: none;
 }
 
+#uploadDiv2-1 {
+    display: none;
+}
+
+#uploadDiv2-2 {
+    display: none;
+}
+
+#uploadDiv2-3 {
+    display: none;
+}
+
 .list-group-item {
     background-color: transparent;
+}
+
+.hidden { visibility:hidden; }
+
+#imageDiv {
+    position: absolute;
+    display: none;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    pointer-events: none;
+}
+
+.cancel-button {
+    outline: solid 2px #F4F5F6;
+    outline-offset: -2px;
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.75rem;
+    color: #909090;
+}
+
+.save-button {
+    background-color: #04A3DA;
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.75rem;
+    color: white;
 }

@@ -11,16 +11,18 @@
     import accounts from "./assets/accounts.svg";
     
     // Main Content
-    import user from "./assets/user.svg";
+    import userAdd from "./assets/user-add.svg";
     import trashCan from "./assets/trash-can.svg";
     import edit from "./assets/message-edit.svg";
 
     import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
     import EditUserModal from "./lib/EditUserModal.svelte";
+    import DeleteUserModal from "./lib/DeleteUserModal.svelte";
     import { fetchUsers } from "./apis/adminApis.js";
     import { Link } from "svelte-routing";
     let users = [];
+    let selectedUser = null;
 
     async function loadUsers() {
         try {
@@ -110,10 +112,13 @@
         border-style: solid;
         background-color: #F6F6F6;
     }
+    th {
+        font-weight: 600 !important;
+    }
     td, th {
         padding: 0.60rem !important;
         text-align: left;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 400;
         position: relative;
     }
@@ -143,42 +148,20 @@
         background-color: #E6E8EC;
         z-index: 1;
     }
-
-    /* input[type="color"]:first-child {
-        padding: 0;
-        margin: 0;
-        border: none;
-        box-shadow: none;
-        border-radius: 100px;
-        background: none;
-    }
-
-    input[type="color"]::-webkit-color-swatch-wrapper {
-        padding: 0;
-    }
-
-    input[type="color"]::-webkit-color-swatch {
-    border: none;border-radius:4px;
-    }
-
-    input[type="color"]:nth-child(2) {
-    padding: 0;
-    margin: 0;
-    border: none;
-    box-shadow: none;
-    border-radius: 100px;
-    background: #f0bc12;
-    outline: none;
-    }
-
-    input[type="color" i] {
-    border-radius: 5px;
-    border: none;
-    height: 40px;
-    width: 40px;
-    display: block;
-    } */
 </style>
+
+<!-- Create User Modal -->
+<NewUserModal />
+
+<!-- Edit User Modal -->
+{#if selectedUser !== null}
+    <EditUserModal user = {selectedUser} />
+{/if}
+
+<!-- Edit User Modal -->
+{#if selectedUser !== null}
+    <DeleteUserModal user = {selectedUser} />
+{/if}
 
 <main class="m-0 p-0">
     <header class="p-4" id="navbar">
@@ -226,7 +209,7 @@
                     <div class="d-flex justify-content-end">
                         <div class="col-md-6 d-flex justify-content-end">
                             <button class="btn bg-light me-2 media-content-button border-0" data-bs-toggle="modal" data-bs-target="#newUserModal">
-                                <img src="{ user }" alt="Directbox Send" class="me-2">
+                                <img src="{ userAdd }" alt="Directbox Send" class="me-2">
                                 Kişi Oluştur
                             </button>
                         </div>
@@ -252,22 +235,22 @@
                                 {#each users as user, index}
                                 <tr class="text-center">
                                     <td>
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                        <input class="form-check-input" type="checkbox" value="" id="{user._id}">
                                     </td>
-                                    <td class="fileDesc">{user.name} {user.lastname}</td>
+                                    <td class="fileDesc">{user.name}</td>
                                     <td class="fileDesc">{user.email}</td>
                                     <td class="fileDesc">{user.mainUserDegree}</td>
                                     <td class="fileDesc">{user.companyName}</td>
                                     <td class="fileDesc">{user.numberOfScreens}</td>
                                     <td class="fileDesc">
                                         <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center">
+                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                 <span>
                                                     <img src="{ trashCan }" alt="Trash Can" width="25">
                                                 </span>
                                             </button>
                                             <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center">
+                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                 <span>
                                                     <img src="{ edit }" alt="Edit" width="25">
                                                 </span>
@@ -279,8 +262,7 @@
                             </tbody>
                         </table>
 
-                        <!-- Create User Modal -->
-                        <NewUserModal />
+                        
                     </div>
                 </div>
             </div>

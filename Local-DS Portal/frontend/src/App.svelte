@@ -5,6 +5,11 @@
   import AdminAccounts from './adminAccounts.svelte';
   import UserDashboard from './userDashboard.svelte';
 
+  // Lib
+    import './lib/Navbar.svelte';
+    import './lib/EditUserModal.svelte';
+    import './lib/NewUserModal.svelte';
+
   import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js";
 </script>
 

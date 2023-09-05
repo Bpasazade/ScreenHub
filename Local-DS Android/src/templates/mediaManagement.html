@@ -5,9 +5,13 @@
     <title>Medya Yönetimi</title>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../assets/js/mediaManagement.js"></script>
-
+    <script type="module" src="../assets/js/mediaManagement.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link href="/node_modules/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../assets/css/mediaManagement.css" rel="stylesheet">
     <link href="../assets/css/common.css" rel="stylesheet">
 </head>
@@ -40,18 +44,18 @@
                 </a>
               </li>
               <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="./mediaManagement.html">
+                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="./mediaManagement.html" style="background-color: #04A3DA; color: white;">
                     <img src="../assets/img/mediaManagement/media-management.svg" alt="Media Management" class="me-2">
                     Medya Yönetimi
                 </a>
               </li>
-              <li>
+              <li style="display: none;">
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
                     <img src="../assets/img/mediaManagement/system-info.svg" alt="System Info" class="me-2">
                     Sistem Bilgisi
                 </button>
               </li>
-              <li>
+              <li style="display: none;">
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
                     <img src="../assets/img/mediaManagement/memory-management.svg" alt="Memory Management" class="me-2">
                     Bellek Yönetimi
@@ -63,26 +67,20 @@
                     Dosya Yönetimi
                 </a>
               </li>
-              <li>
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                    <img src="../assets/img/mediaManagement/accounts.svg" alt="Accounts" class="me-2">
-                    Hesaplar
-                </button>
-              </li>
             </ul>
         </div>
         <div class="col-md px-0" id="main-content-div">
-            <div class="row d-flex flex-column px-4 pt-4 mx-0">
-                <div class="col-md-12 p-4 bg-white rounded mb-4">
+            <div class="row d-flex flex-column px-3 pt-3 mx-0" style="max-height: 100vh;">
+                <div class="col-md-12 p-4 bg-white rounded mb-3">
                     <div class="d-flex justify-content-between">
                         <div class="col-md-6">
-                            <button class="btn bg-light me-2 media-content-button border-0" data-bs-toggle="modal" data-bs-target="#addMediaModal" id="addMediaBtn">
-                                <img src="../assets/img/mediaManagement/directbox-send.svg" alt="Directbox Send" class="me-2">
-                                Medya Ekle
-                            </button>
                             <button class="btn bg-light me-2 media-content-button border-0" data-bs-toggle="modal" data-bs-target="#newPlaylist">
                                 <img src="../assets/img/mediaManagement/folder-add.svg" alt="Folder Add" class="me-2">     
                                 Playlist Oluştur
+                            </button>
+                            <button class="btn bg-light me-2 media-content-button border-0" data-bs-toggle="modal" data-bs-target="#addMediaModal" id="addMediaBtn">
+                                <img src="../assets/img/mediaManagement/video-square-dark.svg" alt="Directbox Send" class="me-2">
+                                Medya Ekle
                             </button>
                         </div>
 
@@ -95,13 +93,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <form action="#" id="playlistForm">
-                                <div class="modal-body">
-                                    <div class="input-group">
-                                        <input type="text" id="playlistName" class="form-control" placeholder="Playlist adını girin">
-                                        <span class="input-group-text px-2">
-                                            <input type="color" value="#04A3DA" class="form-control" style="width: 32px; height: 32px;">
-                                        </span> 
-                                    </div>
+                                <div class="modal-body d-flex justify-content-around align-items-center">
+                                    <input type="text" id="playlistName" class="form-control" placeholder="Playlist adını girin">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
@@ -114,29 +107,63 @@
 
                         <!-- Add Media Modal -->
                         <div class="modal fade" id="addMediaModal" tabindex="-1" aria-labelledby="addMediaModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="addMediaModalLabel">Add Media</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form action="#" id="addMediaForm">
-                                <div class="form-group">
-                                    <div class="modal-body">
-                                    <label for="uploadFolderSelect">Medya eklemek için klasör seçin.</label>
-                                    <select class="form-control mb-3" id="uploadFolderSelect" name="uploadFolderName">
-                                        <!-- Options will be populated dynamically using JavaScript -->
-                                    </select>
-                                    <ul class="list-group" id="mediaListInFolder">
+                            <div class="modal-dialog modal-dialog-centered modal-xl">
+                            <div class="modal-content p-4" style="background-color: #F7F8FA;">
+                                <div class="container mx-0 px-0 d-flex justify-content-between" style="height: 74vh;">
+                                    <div class="col-md-4 p-4 bg-white rounded">
+                                        <div class="row d-flex justify-content-between align-items-center">
+                                            <div class="col mb-3">
+                                                <h1 class="text" style="font-size: 20px; font-weight: 500;">Klasörler</h1>
+                                            </div>
+                                        </div>
+                                        <ul class="list-group list-group-flush" id="folderListModal">
+                                            <button id="folderMain" class="btn list-group-item d-flex justify-content-start text-white align-items-center playlist-button mb-3 p-3" 
+                                            style="border-radius: 9px;
+                                                    border: 1px solid #7ADAFC;
+                                                    background: #04A3DA;">
+                                                    <img src="../assets/img/mediaManagement/folder-white.svg" alt="Folder" width="30">
+                                                    <p class="ms-3 mb-0" style="font-size: 14px; font-weight: 400;">Ana Dizin</p>
+                                            </button>
+                                        </ul>
+                                        <div class="col-md-11 d-flex flex-column float-end">
+                                            
+                                            <ul class="list-group list-group-flush" id="addMediaFolderList">
+                                                <button class="btn list-group-item d-flex justify-content-start align-items-center playlist-button mb-3 p-3"
+                                                    style="border-radius: 9px;
+                                                    border: 1px solid #DDD;
+                                                    background: #F6F6F6;">
+                                                        <img src="../assets/img/mediaManagement/folder-white.svg" alt="Folder" width="30">
+                                                        <p class="ms-3 mb-0" style="font-size: 14px; font-weight: 400;">Ana Dizin</p>
+                                                </button>
+                                            </ul>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="vr mx-2" style="color: #E6E8EC; width: 3px; background-color: transparent;"></div>
+                                    <div class="col-md-9 px-4 bg-white rounded py-1" style="flex: 1;">
+                                        <div class="d-flex justify-content-start align-items-center px-4 pt-4 mb-3">
+                                            <div style="background: #04A3DA66; border-radius: 13px; width: fit-content;">
+                                                <p class="text mb-0 p-2" style="font-size: 18px; font-weight: 500; color: #04A3DA;">Ana Dizin</p>
+                                            </div>
+                                            <span class="mx-1">
+                                                <img src="../assets/img/mediaManagement/dashed-line.svg" alt="more" width="9">
+                                            </span>
+                                            <div class="px-2" style="background: #F4F4F4; border: solid 1px #04A3DA; border-radius: 13px; width: fit-content;">
+                                                <p id="folderNameModal" class="text mb-0 p-2" style="font-size: 18px; font-weight: 500; color: #04A3DA;"></p>
+                                            </div>
+                                        </div>
+                                        <div class="px-2">
+                                            <hr class="my-0" style="color: #E6E8EC; height: 1px; border: solid 1px #9d9fa3;">
+                                            <table class="table" id="mediaTable" style="margin-top: -0.75rem;">
+                                                
+                                                <tbody id="folderlist-upload-tbody" class="text-center">
 
-                                    </ul>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary border-0" data-bs-dismiss="modal">İptal</button>
-                                    <button type="submit" class="btn btn-primary border-0" data-bs-dismiss="modal" style="background-color: #04A3DA;">Ekle</button>
-                                </div>
-                                </form>
                             </div>
                             </div>
                         </div>
@@ -158,7 +185,7 @@
                     </div>
                 </div>
 
-                <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
+                <hr class="mb-3" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
                 <div class="container mx-0 px-0 d-flex justify-content-between" style="height: 74vh;">
                     <div class="col-md-3 p-4 bg-white rounded mb-4">
                         <div class="row d-flex justify-content-between align-items-center">
@@ -189,16 +216,16 @@
                         <!-- Media Modal -->
                         <div class="modal fade" id="mediaModal" tabindex="-1" aria-labelledby="mediaModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
-                            <div class="modal-content" id="mediaModalContent">
-                                <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="mediaNameLabel"></h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal-content" id="mediaModalContent">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="mediaNameLabel"></h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
-                    <div class="vr mx-4 mb-4" style="color: #E6E8EC; width: 3px;"></div>
+                    <div class="vr mx-3 mb-4" style="color: #E6E8EC; width: 3px;"></div>
                     <div class="col-md-9 px-4 bg-white rounded mb-4 py-1" style="flex: 1;">
                         <table class="table table-borderless" id="mediaTable">
                             <thead id="playlist-thead">
@@ -214,6 +241,26 @@
                                 <p id="playlist-init-txt" class="text-center py-3 mt-5" style="font-size: 18px; font-weight: 400; color: #BABCBD;">Playlist Seçiniz</p>
                             </tbody>
                         </table>
+                    </div>
+                    <!-- Edit Media Modal -->
+                    <div class="modal fade" id="editMedia" tabindex="-1" aria-labelledby="editMediaLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="editMediaLabel">Klasör Seçenekleri</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="#" id="editMediaForm">
+                                        <div class="modal-body d-flex justify-content-around align-items-center">
+                                            <input type="number" id="folderNameOptions" class="form-control" placeholder="Medya süresi girin">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn cancel-button" data-bs-dismiss="modal">İptal</button>
+                                            <button type="submit" class="btn btn-primary save-button" data-bs-dismiss="modal">Kaydet</button>
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

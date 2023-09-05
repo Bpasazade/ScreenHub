@@ -47,6 +47,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@popperjs/core@^2.11.8":
+  version "2.11.8"
+  resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz"
+  integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
+
 "@sveltejs/vite-plugin-svelte-inspector@^1.0.3":
   version "1.0.4"
   resolved "https://registry.npmjs.org/@sveltejs/vite-plugin-svelte-inspector/-/vite-plugin-svelte-inspector-1.0.4.tgz"
@@ -104,6 +109,11 @@ axobject-query@^3.2.1:
   integrity sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==
   dependencies:
     dequal "^2.0.3"
+
+bootstrap@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.1.tgz"
+  integrity sha512-jzwza3Yagduci2x0rr9MeFSORjcHpt0lRZukZPZQJT1Dth5qzV7XcgGqYzi39KGAVYR8QEDVoO0ubFKOxzMG+g==
 
 code-red@^1.0.3:
   version "1.0.4"

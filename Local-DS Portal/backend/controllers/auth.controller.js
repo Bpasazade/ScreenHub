@@ -12,9 +12,11 @@ exports.signup = (req, res) => {
     lastname: req.body.lastname,
     mainUserDegree: req.body.mainUserDegree,
     email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
     backupName: req.body.backupName,
     backupLastname: req.body.backupLastname,
     backUserDegree: req.body.backUserDegree,
+    backupPhoneNumber: req.body.backupPhoneNumber,
     companyName: req.body.companyName,
     companyAddress: req.body.companyAddress,
     numberOfScreens: req.body.numberOfScreens,
@@ -22,7 +24,6 @@ exports.signup = (req, res) => {
   });
 
   console.log(req.body);
-  console.log(req.body.roles);
 
   user.save((err, user) => {
     if (err) {
@@ -116,7 +117,6 @@ exports.signin = (req, res) => {
       }
       res.status(200).send({
         id: user._id,
-        username: user.username,
         email: user.email,
         roles: authorities,
         accessToken: token
@@ -127,11 +127,39 @@ exports.signin = (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-    const targetRoleId = '64eb704c457376db282ca9be';
+    const targetRoleId = '64eda2e32440d4728765b786';
     console.log(users.filter(user => user.roles.some(roleId => roleId.toString() === targetRoleId)));
     const returnUsers = users.filter(user => user.roles.some(roleId => roleId.toString() === targetRoleId));
     res.status(200).json(returnUsers);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+    res.status(200).json(deletedUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user', error: error.message });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userData = req.body;
+    const existingUser = await User.findById(id);
+
+    if (!existingUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user', error: error.message });
   }
 };
