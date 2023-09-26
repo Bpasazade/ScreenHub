@@ -163,3 +163,22 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ message: 'Error updating user', error: error.message });
   }
 };
+
+exports.storeUserIdInSession = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    req.session.userId = userId;
+    res.status(200).json({ message: 'User id stored in session' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error storing user id in session', error: error.message });
+  }
+};
+
+exports.signout = async (req, res) => {
+  try {
+    req.session.destroy();
+    res.status(200).json({ message: 'User signed out' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error signing out user', error: error.message });
+  }
+};

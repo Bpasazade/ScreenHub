@@ -1,6 +1,7 @@
 import { currentPlaylistName } from "./mediaManagement.js";
 $(window).on("load", function() {
     fetchFolders();
+    var uploadInProgress = false;
 
     getDeviceStorageInfo(function (storageInfo) {
         console.log('Used storage: ' + storageInfo.usedStorage);
@@ -201,8 +202,9 @@ $(window).on("load", function() {
             formDataPlaylist.append('uploadPlaylistName', $("#uploadPlaylistSelect").val());
             formDataPlaylist.append('folderName', $("#uploadFolderSelect").val()); 
             
-            //uploadFiles(formDataFolder);
-            addContentToPlaylist(formDataPlaylist);
+            uploadFiles(formDataFolder);
+            if($("#uploadPlaylistSelect").val() != "(İsteğe Bağlı))")
+                addContentToPlaylist(formDataPlaylist);
 
             completedUploadsList.empty();
         });
@@ -638,15 +640,19 @@ async function showFolderContents(folderName) {
                     $('body').append(imageDiv);
                 } else {
                     const video = $('<video>');
-                    video.attr('autoplay', 'true');
+                    video.attr('id', 'video' + i);
+                    video.attr('loop', 'true');
+                    video.attr('muted', 'true');
                     video.css('width', '300px');
                     video.css('height', 'auto');
                     video.css('border-radius', '5px');
 
                     const source = $('<source>');
                     source.attr('src', '../../' + content.filePath);
-                    source.attr('type', 'video/mp4');
+                    source.attr('type', 'video/' + fileType);
                     video.append(source);
+
+                    console.log(video);
 
                     imageDiv.append(video);
                     $('body').append(imageDiv);
@@ -658,12 +664,14 @@ async function showFolderContents(folderName) {
                 td2a.attr('href', '#');
                 td2a.text(content.fileName);
 
-
+                let video = document.getElementById('video' + i);
                 td2.on('mouseenter', function () {
+                    video.play();
                     showImage(imageDiv, followMouse);
                 });
 
                 td2.on('mouseleave', function () {
+                    video.pause();
                     hideImage(imageDiv, followMouse);
                 });
 
@@ -723,7 +731,7 @@ async function showFolderContents(folderName) {
              
                 playMediaBtn.on('click', function (event) {
                    event.preventDefault();
-                   const fileUrl = content.filePath;
+                   const fileUrl = "uploads/" + folderName + "/" + content.fileName + "";
                    const fileName = content.fileName;
                    const fileType = fileName.substr((fileName.lastIndexOf('.') + 1));
                    console.log(fileUrl + "  " + fileType);
@@ -877,8 +885,18 @@ function downloadFile(fileData) {
 function displayInModal(fileUrl, fileType, fileName) {
     const modal = $('#mediaModal');
     const modalContent = $('#mediaModalContent');
+    modalContent.empty();
+    modalContent.append(`<div class="modal-header">
+                            <h1 class="modal-title fs-5" id="mediaNameLabel"></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>`);  
     const mediaNameLabel = $('#mediaNameLabel');
     mediaNameLabel.text(fileName);
+
+    $('.btn-close').on('click', function () {
+        modalContent.empty();
+        modal.modal('hide');
+    });
 
     console.log(fileUrl + "  " + fileType);
     
@@ -889,8 +907,8 @@ function displayInModal(fileUrl, fileType, fileName) {
         modalContent.append(imgElement);
         console.log("image");
     } else if (fileType.startsWith("mp4") || fileType.startsWith("mkv") || fileType.startsWith("mov") || fileType.startsWith("wmv")) {
-        const videoElement = $('<video>').attr('controls', true);
-        const sourceElement = $('<source>').attr('src', '../../' + fileUrl).attr('type', fileType);
+        const videoElement = $('<video controls>');
+        const sourceElement = $('<source>').attr('src', '../../' + fileUrl).attr('type', 'video/' + fileType);
         videoElement.append(sourceElement);
         modalContent.append(videoElement);
     }

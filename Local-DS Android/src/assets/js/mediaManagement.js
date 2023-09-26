@@ -170,7 +170,7 @@ async function populateFoldersInModal() {
         console.log(data);
         if (data.folders) {
             
-            for (i = 0; i < data.folders.length; i++) {
+            for (let i = 0; i < data.folders.length; i++) {
                 const folder = data.folders[i];
                 const folderNameModal = $("#folderNameModal");
                 
@@ -247,7 +247,7 @@ async function populateFoldersInModal() {
 }
 
 function RGB2Color(r,g,b) {
-  return '#' + this.byte2Hex(r) + this.byte2Hex(g) + this.byte2Hex(b);
+  return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
 }
 function byte2Hex (n) {
   var nybHexString = "0123456789ABCDEF";
@@ -434,7 +434,7 @@ async function showPlaylistContents(playlistName) {
           
               playMediaBtn.on('click', function (event) {
                 event.preventDefault();
-                const fileUrl = content.filePath;
+                const fileUrl = "uploads/" + content.foldername + "/" + content.filename;
                 const fileName = content.filename;
                 const fileType = fileName.substr((fileName.lastIndexOf('.') + 1));
                 console.log(fileUrl + "  " + fileType);
@@ -540,6 +540,11 @@ async function deletePlaylist(formData) {
 function displayInModal(fileUrl, fileType, fileName) {
     const modal = $('#mediaModal');
     const modalContent = $('#mediaModalContent');
+    modalContent.empty();
+    modalContent.append(`<div class="modal-header">
+                            <h1 class="modal-title fs-5" id="mediaNameLabel"></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>`);   
     const mediaNameLabel = $('#mediaNameLabel');
     mediaNameLabel.text(fileName);
     

@@ -8,6 +8,25 @@ export async function signIn(email, password) {
       throw new Error(response.data.message);
     }
 
+    const { user } = response.data;
+    if (user) {
+      await axios.post('http://localhost:3000/api/auth/storeUserIdInSession', { userId: user._id });
+    }
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function signOut() {
+  try {
+    const response = await axios.get('http://localhost:3000/api/auth/signout');
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+
     return response.data;
   } catch (error) {
     throw error;

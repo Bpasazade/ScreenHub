@@ -9,6 +9,7 @@
   import search from "./assets/search.svg";
   import dashboard from "./assets/dashboard.svg";
   import accounts from "./assets/accounts.svg";
+  import userImage from "./assets/user-image.svg";
   
   // Main Content
 
@@ -106,6 +107,16 @@
                     </button>
                 </Link>
               </li>
+            </ul>
+            <ul>
+                <li>
+                    <Link to="/adminScreens" style="text-decoration: none;">
+                        <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
+                            <img src="{ accounts }" alt="Screens" class="me-2">
+                            Ekranlar
+                        </button>
+                    </Link>
+                </li>
             </ul>
         </div>
         <div class="col-md px-0" id="main-content-div">

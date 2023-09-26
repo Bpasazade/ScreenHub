@@ -26,4 +26,8 @@ module.exports = function(app) {
   app.delete('/api/users/:id', controller.deleteUser);
 
   app.put('/api/users/:id', controller.updateUser);
+
+  app.post('/api/auth/storeUserIdInSession', controller.storeUserIdInSession);
+
+  app.get('/api/auth/signout', controller.signout);
 };
