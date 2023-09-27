@@ -136,6 +136,17 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    console.log(user);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user', error: error.message });
+  }
+};
+
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -164,19 +175,9 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.storeUserIdInSession = async (req, res) => {
-  try {
-    const { userId } = req.body;
-    req.session.userId = userId;
-    res.status(200).json({ message: 'User id stored in session' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error storing user id in session', error: error.message });
-  }
-};
-
 exports.signout = async (req, res) => {
   try {
-    req.session.destroy();
+    localStorage.removeItem('accessToken');
     res.status(200).json({ message: 'User signed out' });
   } catch (error) {
     res.status(500).json({ message: 'Error signing out user', error: error.message });

@@ -1,20 +1,54 @@
 <!-- src/adminHome.svelte -->
 <script>
-  // Navbar
-  import RubuPlusLogoDark from "./assets/rubuplus-logo-dark.svg";
-  import settings from "./assets/settings.svg";
-  import notification from "./assets/notification-bell.svg";
+    // Navbar
+    import RubuPlusLogoDark from "./assets/rubuplus-logo-dark.svg";
+    import settings from "./assets/settings.svg";
+    import notification from "./assets/notification-bell.svg";
 
-  // Sidebar
-  import search from "./assets/search.svg";
-  import dashboard from "./assets/dashboard.svg";
-  import accounts from "./assets/accounts.svg";
-  import userImage from "./assets/user-image.svg";
-  
-  // Main Content
+    // Sidebar
+    import search from "./assets/search.svg";
+    import dashboard from "./assets/dashboard.svg";
+    import accounts from "./assets/accounts.svg";
+    import logout from "./assets/logout.svg";
+    import profile from "./assets/profile.svg";
+    import lifebuoy from "./assets/lifebuoy.svg";
+
+    // Lib
+    import { Link } from "svelte-routing";
+    import { signOut } from "./apis/userApis";
+    import { navigate } from 'svelte-routing';
+    import { getUser } from "./apis/userApis";
+
+    import jwt_decode from "jwt-decode";
+    var decoded = {
+        id: null,
+        ait: null,
+        exp: null
+    }
+    decoded = jwt_decode(localStorage.getItem("accessToken"));
+    console.log(decoded.id);
+    var user = {
+        companyName: null,
+        numberOfScreens: null
+    }
+    async function getTheUser() {
+        user = await getUser(decoded.id);
+        console.log(user);
+    }
+    getTheUser();
 
 
-  import { Link } from "svelte-routing";
+    // var currentUser = getUser(sessionStorage.getItem('userId') );
+    async function signOutUser() {
+        try {
+            await signOut();
+            localStorage.removeItem('accessToken');
+            navigate('/login');
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    }
+
 </script>
 
 <style>
@@ -67,6 +101,9 @@
     #main-content-div {
         background-color: #f7f7f7;
     }
+    ul {
+        list-style-type: none;
+    }
 </style>
 
 <main class="m-0 p-0">
@@ -81,7 +118,7 @@
     </header>
     
     <div class="row d-flex m-0 p-0" style="height: 92vh;">
-        <div class="d-flex flex-column flex-shrink-0" style="width: 320px;" id="sidebar">
+        <div class="d-flex flex-column flex-shrink-0 justify-content-between" style="width: 320px;" id="sidebar">
             <ul class="nav nav-pills flex-column p-4">
               <li class="nav-item">
                 <div class="input-group w-100">
@@ -108,16 +145,30 @@
                 </Link>
               </li>
             </ul>
-            <ul>
+            <ul class="mb-4 p-4">
                 <li>
-                    <Link to="/adminScreens" style="text-decoration: none;">
+                    <Link to="/userDashboard" style="text-decoration: none;">
                         <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                            <img src="{ accounts }" alt="Screens" class="me-2">
-                            Ekranlar
+                            <img src="{ lifebuoy }" alt="Dashboard" class="me-3">
+                            <p class="text m-0">Destek</p>
                         </button>
                     </Link>
+                    
+                    <hr class="mb-3" style="color: #E6E8EC; height: 1px; border: solid 1px #D9D9D9;">
+                    <Link to="/login" style="text-decoration: none;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <img src="{ profile }" alt="User" class="me-3">
+                            <div class="d-flex flex-column justify-content-between align-items-start">
+                                <p class="text-black m-0">{ user.name }</p>
+                                <p class="text-secondary m-0" style="font-size: 13px; font-weight:300;">{ user.email }</p>
+                            </div>
+                            
+                            <button class="btn text-start d-flex align-items-middle" type="button"  on:click="{ signOutUser }">
+                                <img src="{ logout }" alt="Screens" class="me-2">
+                            </button>
+                        </div>
+                    </Link>
                 </li>
-            </ul>
         </div>
         <div class="col-md px-0" id="main-content-div">
             <div class="row d-flex flex-column px-4 pt-4 mx-0">

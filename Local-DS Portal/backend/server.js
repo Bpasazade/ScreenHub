@@ -1,27 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const dbConfig = require("./config/db.config");
-const session = require('express-session');
-const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 
 var corsOptions = {
   origin: "http://localhost:3000"
 };
-
-const sessionOptions = {
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
-  }
-};
-
-app.use(session(sessionOptions));
 
 app.use(cors());
 

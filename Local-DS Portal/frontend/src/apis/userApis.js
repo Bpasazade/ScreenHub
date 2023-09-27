@@ -33,18 +33,31 @@ export async function signOut() {
   }
 }
 
-export async function getDashboard(accessToken) {
+export async function getDashboard(_id, accessToken) {
   try {
     const headers = {
       'x-access-token': accessToken,
     };
 
-    const response = await axios.get('http://localhost:3000/api/test/user', { headers });
+    const response = await axios.get(`http://localhost:3000/api/users/${_id}`, { headers });
 
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getUser(_id) {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/users/${_id}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

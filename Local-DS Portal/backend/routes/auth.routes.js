@@ -27,7 +27,7 @@ module.exports = function(app) {
 
   app.put('/api/users/:id', controller.updateUser);
 
-  app.post('/api/auth/storeUserIdInSession', controller.storeUserIdInSession);
+  app.get("/api/users/:id", controller.getUser);
 
   app.get('/api/auth/signout', controller.signout);
 };
