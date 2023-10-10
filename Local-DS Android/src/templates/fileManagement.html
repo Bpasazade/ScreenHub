@@ -24,10 +24,6 @@
     <header class="p-4" id="navbar">
         <div class="d-flex justify-content-between">
           <img src="../assets/img/mediaManagement/rubuplus-logo-dark.svg" alt="Logo" class=""><br>
-          <div class="settingsNotificationDiv">
-              <img src="../assets/img/mediaManagement/settings.svg" alt="Settings" class="me-3">
-              <img src="../assets/img/mediaManagement/notification-bell.svg" alt="Notification" class="">
-          </div>
         </div>
     </header>
     
@@ -35,47 +31,47 @@
         <div class="d-flex flex-column flex-shrink-0" style="width: 320px;" id="sidebar">
             <ul class="nav nav-pills flex-column p-4">
               <li class="nav-item">
-                <div class="input-group w-100">
-                    <span class="input-group-addon align-items-center d-flex" id="search-addon">
-                        <img src="../assets/img/mediaManagement/search.svg" alt="Search" class="me-2">
+                <div class="input-group">
+                    <span class="input-group-addon align-items-center" id="search-addon">
+                        <img id="sidebar-svg" src="../assets/img/mediaManagement/search.svg" alt="Search" class="me-2">
                     </span>
                     <input class="form-control border-0" type="search" placeholder="Arama Yap" aria-label="Search" id="search-form">
-                </div>     
+                </div>  
               </li>
               <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="dashboard.html">
-                    <img src="../assets/img/mediaManagement/dashboard.svg" alt="Dashboard" class="me-2">
-                    Dashboard
+                <a class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" href="dashboard.html">
+                    <img id="sidebar-svg" src="../assets/img/mediaManagement/dashboard.svg" alt="Dashboard" class="me-2">
+                    <span class="">Dashboard</span>
                 </a>
               </li>
               <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="./mediaManagement.html">
-                    <img src="../assets/img/mediaManagement/media-management.svg" alt="Media Management" class="me-2">
-                    Medya Yönetimi
+                <a class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" href="./mediaManagement.html">
+                    <img id="sidebar-svg" src="../assets/img/mediaManagement/media-management.svg" alt="Media Management" class="me-2">
+                    <span class="">Medya Yönetimi</span>
                 </a>
               </li>
               <li style="display: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                    <img src="../assets/img/mediaManagement/system-info.svg" alt="System Info" class="me-2">
-                    Sistem Bilgisi
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button">
+                    <img id="sidebar-svg" src="../assets/img/mediaManagement/system-info.svg" alt="System Info" class="me-2">
+                    <span class="">Sistem Bilgisi</span>
                 </button>
               </li>
               <li style="display: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                    <img src="../assets/img/mediaManagement/memory-management.svg" alt="Memory Management" class="me-2">
-                    Bellek Yönetimi
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button">
+                    <img id="sidebar-svg" src="../assets/img/mediaManagement/memory-management.svg" alt="Memory Management" class="me-2">
+                    <span class="">Bellek Yönetimi</span>
                 </button>
               </li>
               <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="./fileManagement.html">
-                    <img src="../assets/img/mediaManagement/file-management.svg" alt="File Management" class="me-2">
-                    Dosya Yönetimi
+                <a class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" href="./fileManagement.html">
+                    <img id="sidebar-svg" src="../assets/img/mediaManagement/file-management.svg" alt="File Management" class="me-2">
+                    <span class="">Dosya Yönetimi</span>
                 </a>
               </li>
             </ul>
         </div>
         <div class="col-md px-0" id="main-content-div">
-            <div class="row d-flex flex-column px-3 pt-3 mx-0" style="height: 92vh;">
+            <div id="main-div" class="row d-flex flex-column px-3 pt-3 mx-0" style="height: 92vh;">
                 <div class="col-md-12 p-4 bg-white rounded mb-3">
                     <div class="d-flex justify-content-between">
                         <div class="col-md-6">

@@ -51,6 +51,7 @@ $(window).on("load", function() {
     playlistList.on("click", ".playlist-button, .playlist-options-btn", async function (event) {
         const target = $(event.target);
         if (target.hasClass("playlist-button")) {
+            $("#addMediaBtn").attr("disabled", false);
             const playlistName = target.data("playlist");
             currentPlaylistName = target.data('playlist');
             console.log(currentPlaylistName);

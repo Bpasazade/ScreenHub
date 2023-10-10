@@ -582,17 +582,25 @@ function followMouse(event) {
         imageDivs.css('left', event.clientX - imageWidth - offsetX + 'px');
         imageDivs.css('top', event.clientY - offsetY + 'px');
     }, 0.00000001);
-  }
+}
   
-  function showImage(imageDiv, followMouse) {
-    imageDiv.css('display', 'block');
-    $(document).on('mousemove', followMouse);
-  }
+function showImage(imageDiv, followMouse, folderName, fileName) {
+    try {
+        const response = fetch(`/getMedia?folderName=${folderName}&fileName=${fileName}`);
+        const data = response.json();
+        if (data.success) {
+            const source = imageDiv.find('source');
+            
+            imageDiv.css('display', 'block');
+            $(document).on('mousemove', followMouse);
+            
   
-  function hideImage(imageDiv, followMouse) {
-    imageDiv.css('display', 'none');
-    $(document).off('mousemove', followMouse);
-  }
+}
+  
+function hideImage(imageDiv, followMouse) {
+  imageDiv.css('display', 'none');
+  $(document).off('mousemove', followMouse);
+}
 
 async function showFolderContents(folderName) {
     const folderTbody = $('#folder-tbody');
@@ -602,6 +610,7 @@ async function showFolderContents(folderName) {
 
         if (data.contents) {
             folderTbody.empty();
+            $('.imageDiv').remove();
 
             for (let i = 0; i < data.contents.length; i++) {
                 const content = data.contents[i];
@@ -629,16 +638,20 @@ async function showFolderContents(folderName) {
                 imageDiv.css('border-radius', '5px');
                 imageDiv.css('box-shadow', '0px 0px 10px 0px rgba(0,0,0,0.75)');
 
+                let fileTypeStr = "";
+
                 if(fileType.startsWith("jpg") || fileType.startsWith("png") || fileType.startsWith("svg") || fileType.startsWith("jpeg") || fileType.startsWith("webp")) {
+                    fileTypeStr = "image";
                     const image = $('<img>');
-                    image.attr('src', '../../' + content.filePath);
+                    // image.attr('src', '../../' + content.filePath);
                     image.css('width', '300px');
                     image.css('height', 'auto');
                     image.css('border-radius', '5px');
-                    
+                    image.name = "image";
+
                     imageDiv.append(image);
-                    $('body').append(imageDiv);
                 } else {
+                    fileTypeStr = "video";
                     const video = $('<video>');
                     video.attr('id', 'video' + i);
                     video.attr('loop', 'true');
@@ -648,15 +661,16 @@ async function showFolderContents(folderName) {
                     video.css('border-radius', '5px');
 
                     const source = $('<source>');
-                    source.attr('src', '../../' + content.filePath);
+                    // source.attr('src', '../../' + content.filePath);
                     source.attr('type', 'video/' + fileType);
+                    source.name = "source";
                     video.append(source);
 
                     console.log(video);
 
                     imageDiv.append(video);
-                    $('body').append(imageDiv);
                 }
+                $('body').append(imageDiv);
 
                 const td2 = $('<td>');
                 td2.addClass("fileDesc");
@@ -666,12 +680,16 @@ async function showFolderContents(folderName) {
 
                 let video = document.getElementById('video' + i);
                 td2.on('mouseenter', function () {
-                    video.play();
-                    showImage(imageDiv, followMouse);
+                    if (video) {
+                        video.play();
+                    }
+                    showImage(imageDiv, followMouse, folderName, content.fileName);
                 });
 
                 td2.on('mouseleave', function () {
-                    video.pause();
+                    if (video) {
+                        video.pause();
+                    }
                     hideImage(imageDiv, followMouse);
                 });
 
@@ -964,6 +982,4 @@ function getDeviceStorageInfo(callback) {
     } else {
       console.log('StorageManager API not supported in this browser.');
     }
-  }
-
-  
+}
