@@ -1,11 +1,12 @@
 import { currentPlaylistName } from "./mediaManagement.js";
-$(window).on("load", function() {
+$(window).on("load", function(event) {
+    event.preventDefault();
     fetchFolders();
     var uploadInProgress = false;
 
     getDeviceStorageInfo(function (storageInfo) {
-        console.log('Used storage: ' + storageInfo.usedStorage);
-        console.log('Total storage: ' + storageInfo.totalStorage);
+        // console.log('Used storage: ' + storageInfo.usedStorage);
+        // console.log('Total storage: ' + storageInfo.totalStorage);
       
         // You can use storageInfo.usedStorage and storageInfo.totalStorage here.
     });
@@ -83,6 +84,7 @@ $(window).on("load", function() {
     const canceledFiles = new Set();
     let uploadsInProgress = new Set();
     var upload = {};
+    var files = [];
 
     $('#fileInput').on('change', function (event) {
     
@@ -100,30 +102,57 @@ $(window).on("load", function() {
         h1.text('Yüklenen Dosyalar');
         upcomingUploadsList.append(h1);
 
-        const files = event.target.files;
+        files = event.target.files;
+
+        const fileProgressBars = [];
+
+        $("#count").text(files.length + " Adet Dosya Seçildi");
 
         for (const file of files) {
+            // Create a progress bar for each file and associate it with the file
+            const progress = $('<div>');
+            progress.addClass('progress');
+            progress.attr('role', 'progressbar');
+            progress.attr('aria-valuenow', '0');
+            progress.attr('aria-valuemin', '0');
+            progress.attr('aria-valuemax', '100');
+            progress.css('height', '6px');
+    
+            const progressBar = $('<div>');
+            progressBar.addClass('progress-bar');
+            progressBar.css('width', '0%');
+            progressBar.css('height', '6px');
+            progressBar.css('background-color', '#04A3DA');
+            progress.append(progressBar);
+            progress.css('display', 'none');
+
             //const progressBar = createProgressBar(file);
             upload = {
-              id: Math.random().toString(36).substr(2, 9),
+              id: file.name,
               inProgress: true,
             }
             uploadsInProgress.add(upload);
+
+            let fileItem = $('<div>');
+            fileItem.attr('id', 'item-' + file.name);
+            fileItem.append(`<div class="d-flex justify-content-between mb-2">
+                                <span class="d-flex align-items-center">
+                                    <img src="../assets/img/mediaManagement/gallery.svg" alt="Gallery" class="me-2">
+                                    <p class="text m-0" style="font-size: 14px; font-weight: 500;">${file.name}</p>
+                                </span>
+                                <span class="d-flex align-items-center cancel-upload" id="cancel-upload">
+                                    <img src="../assets/img/mediaManagementR/close_small.svg" id="cancel-icon" alt="Cancel" data-file-id="${file.id}">
+                                </span>
+                            </div>`);
+                            
             
             // Create the list item for this file
             const fileItemTitle = $('<li>').addClass('list-group-item border-0 px-0')
-                .html(`<div class="d-flex justify-content-between mb-2">
-                            <span class="d-flex align-items-center">
-                                <img src="../assets/img/mediaManagement/gallery.svg" alt="Gallery" class="me-2">
-                                <p class="text m-0" style="font-size: 14px; font-weight: 500;">${file.name}</p>
-                            </span>
-                            <span class="d-flex align-items-center cancel-upload" id="cancel-upload">
-                                <img src="../assets/img/mediaManagementR/close_small.svg" id="cancel-icon" alt="Cancel" data-file-id="${file.id}">
-                            </span>
-                        </div>
-                        <div class="progress" style="display:none; height: 6px; border-radius: 2px; margin-bottom: 10px;" id="progress-bar-${file.id}">
-                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>`);
+            fileItem.append(progress);
+            fileItemTitle.append(fileItem);
+            
+
+            fileProgressBars.push({ file, progress, fileItem });
 
             fileItemTitle.find('.cancel-upload').on("click", function(event) {
                 // const updatedFiles = Array.from(fileInput.files).filter((f) => f !== file);
@@ -137,62 +166,90 @@ $(window).on("load", function() {
             $('#upcoming-uploads').append(fileItemTitle);
         }
 
-        $('#cancel-button').on('click', function () {
+        $('#cancel-button').on('submit', function () {
             upcomingUploadsList.empty();
             canceledFiles.clear();
             upload.inProgress = false;
-            completedUploadsList.empty();
+            upcomingUploadsList.empty();
+        });
+
+        $('#uploadForm').on('submit', function (event) {
+            event.preventDefault();
+            console.log(fileProgressBars);
         });
 
         $('#save-button').on('click', function (event) {
             event.preventDefault();
-            $('#progress-bar-' + file.id).show();
-            const falses = Array.from(uploadsInProgress).filter((upload) => !upload.inProgress);
-            if (!falses) {
-                alert('Upload operation in progress. Wait for it to complete.');
-                return;
-            }
-            const filesToSave = Array.from(fileInput.files).filter((file) => !canceledFiles.has(file));
-            
-            if (filesToSave.length === 0) {
-                alert('No files to save.');
-                return;
-            }
-        
-            const formDataFolder = new FormData();
-            const formDataPlaylist = new FormData();
-            for (let i = 0; i < filesToSave.length; i++) {
-                if(filesToSave[i].type.startsWith("video")) {  
-                    const duration = getVideoDuration(filesToSave[i]);
-                    formDataFolder.append('duration', duration);
+            console.log(fileProgressBars);
+            for (const { file, progress, fileItem } of fileProgressBars) {
+
+                console.log(file);
+                console.log(progress);
+                console.log(fileItem);
+                progress.css('display', 'block');
+                progress.show();
+                const formDataPlaylist = new FormData();
+
+                let duration;
+                if(file.type.startsWith("video")) {
+                    duration = getVideoDuration(file);
                     formDataPlaylist.append('duration', duration);
                 } else {
-                    formDataFolder.append('duration', 0);
+                    duration = 0;
                     formDataPlaylist.append('duration', 0);
                 }
-                formDataFolder.append('uploadedFiles', filesToSave[i]);
-                formDataPlaylist.append('selectedFile', filesToSave[i]);
-        
+                formDataPlaylist.append('selectedFile', file);
+
+                uploadFile(file, $("#uploadFolderSelect").val(), duration, progress);
+                
+                // if($("#uploadPlaylistSelect").val() != "(İsteğe Bağlı))")
+                //     addContentToPlaylist(formDataPlaylist);
             }
-            formDataFolder.append('uploadFolderName', $("#uploadFolderSelect").val());
-            formDataPlaylist.append('uploadPlaylistName', $("#uploadPlaylistSelect").val());
-            formDataPlaylist.append('folderName', $("#uploadFolderSelect").val()); 
-        
-            // Create a progress bar element
-            const progressBar = document.createElement('div');
-            progressBar.classList.add('progress');
-            progressBar.innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>';
-            document.body.appendChild(progressBar);
-        
-            // Pass a callback function to uploadFiles that updates the progress bar
-            uploadFiles(formDataFolder, function(percentComplete) {
-                updateProgressBar(progressBar, percentComplete);
-            });
-        
-            if($("#uploadPlaylistSelect").val() != "(İsteğe Bağlı))")
-                addContentToPlaylist(formDataPlaylist);
+            return false;
         });
     });
+
+    function uploadFile(file, folderName, duration, progress) {
+        const formData = new FormData();
+        formData.append('uploadFolderName', folderName);
+        formData.append('uploadedFiles', file);
+        formData.append('duration', duration);
+
+        $.ajax({
+            url: 'http://127.0.0.1:3000/uploadFiles',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function () {
+                const xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function (e) {
+                    if (e.lengthComputable) {
+                        const percent = (e.loaded / e.total) * 100;
+                        progress.find('.progress-bar').css('width', percent + '%');
+
+                        if (percent === 100) {
+                            progress.find('.progress-bar').addClass('complete');
+                            checkAllProgressBarsComplete();
+                        }
+                    }
+                });
+                return xhr;
+            },
+            success: function () {
+                return false;
+            },
+        });
+    }
+
+    function checkAllProgressBarsComplete() {
+        const allProgressBars = document.querySelectorAll('.progress-bar.complete');
+        if (allProgressBars.length === fileInput.files.length) {
+            // All files uploaded
+            // popup.style.display = 'block';
+            console.log('All files uploaded');
+        }
+    }
         
     function updateProgressBar(progressBar, progress) {
         const progressBarInner = progressBar.querySelector('.progress-bar');
@@ -460,7 +517,6 @@ function byte2Hex (n) {
 function RGB2Color(r,g,b) {
   return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
 }
-
 
 function populateFolderDropdown() {
     const uploadFolderSelect = $("#uploadFolderSelect");

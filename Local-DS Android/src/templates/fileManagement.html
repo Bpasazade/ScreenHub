@@ -98,22 +98,22 @@
                                 <h1 class="modal-title fs-5" id="newFolderLabel">Klasör Oluştur</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <form action="#" id="folderForm">
-                                <div class="modal-body d-flex justify-content-around align-items-center">
-                                    <div class="col-md-7">
-                                        <input type="text" id="folderName" class="form-control" placeholder="Klasör adını girin">
+                                <form id="folderForm">
+                                    <div class="modal-body d-flex justify-content-around align-items-center">
+                                        <div class="col-md-7">
+                                            <input type="text" id="folderName" class="form-control" placeholder="Klasör adını girin">
+                                        </div>
+                                        <div class="col-md-4 d-flex justify-content-around align-items-center">
+                                            <p class="text mb-0 me-2" style="font-size: 14px; width: min-content;">Klasörü Özelleştir</p>
+                                            <span class="input-group-text px-2">
+                                                <input type="color" value="#FFCC00" class="form-control" style="width: 20px; height: 20px;" id="folderColor">
+                                            </span> 
+                                        </div>
                                     </div>
-                                    <div class="col-md-4 d-flex justify-content-around align-items-center">
-                                        <p class="text mb-0 me-2" style="font-size: 14px; width: min-content;">Klasörü Özelleştir</p>
-                                        <span class="input-group-text px-2">
-                                            <input type="color" value="#FFCC00" class="form-control" style="width: 20px; height: 20px;" id="folderColor">
-                                        </span> 
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn cancel-button" data-bs-dismiss="modal">İptal</button>
+                                        <button type="submit" class="btn btn-primary save-button" data-bs-dismiss="modal">Kaydet</button>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn cancel-button" data-bs-dismiss="modal">İptal</button>
-                                    <button type="submit" class="btn btn-primary save-button" data-bs-dismiss="modal">Kaydet</button>
-                                </div>
                                 </form>
                             </div>
                             </div>
@@ -157,7 +157,7 @@
                                 <h1 class="modal-title fs-5" id="folderOptionsLabel">Klasör Seçenekleri</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <form action="#" id="folderOptionsForm">
+                                <form id="folderOptionsForm">
                                         <div class="modal-body d-flex justify-content-around align-items-center">
                                             <div class="col-md-7">
                                                 <input type="text" id="folderNameOptions" class="form-control" placeholder="Klasör adını girin">
@@ -436,13 +436,13 @@
                             </div>
                             <hr style="color: #E6E8EC; height: 1px; border: solid 1px #E6E8EC;">
                             <div class="row d-flex" style="padding-left: 1rem;">
-                                <button id="cancel-button" type="submit" class="btn border-2 me-2 px-3" style="height: 45px; border-color: black; border-radius: 11px; font-weight: 600; font-size: 16px; width: max-content;">
+                                <button id="cancel-button" type="button" class="btn border-2 me-2 px-3" style="height: 45px; border-color: black; border-radius: 11px; font-weight: 600; font-size: 16px; width: max-content;">
                                     <span class="d-flex align-items-center">
                                         İptal Et
                                         <img src="../assets/img/mediaManagementR/sub_left.svg" alt="Trash Can" class="">
                                     </span>
                                 </button>
-                                <button id="save-button" type="submit" class="btn btn-primary border-0 px-3" style="height: 45px; background-color: #04A3DA; border-radius: 11px; font-weight: 600; font-size: 16px; width: max-content;">
+                                <button id="save-button" type="button" class="btn btn-primary border-0 px-3" style="height: 45px; background-color: #04A3DA; border-radius: 11px; font-weight: 600; font-size: 16px; width: max-content;">
                                     <span class="d-flex align-items-center">
                                         Kaydet
                                         <img src="../assets/img/mediaManagementR/done.svg" alt="Trash Can" class="">
