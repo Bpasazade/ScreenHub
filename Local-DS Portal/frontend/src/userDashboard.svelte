@@ -1,4 +1,4 @@
-<!-- src/adminHome.svelte -->
+<!-- src/userDashboard.svelte -->
 <script>
     // Navbar
     import RubuPlusLogoDark from "./assets/rubuplus-logo-dark.svg";

@@ -79,7 +79,7 @@ $(window).on("load", function() {
 
 
     const ongoingUploadsList = $('#ongoing-uploads');
-    const completedUploadsList = $('#completed-uploads');
+    const upcomingUploadsList = $('#upcoming-uploads');
     const canceledFiles = new Set();
     let uploadsInProgress = new Set();
     var upload = {};
@@ -90,90 +90,64 @@ $(window).on("load", function() {
         const uploadDiv23 = $("#uploadDiv2-3");
         uploadDiv22.show();
         uploadDiv23.show();
-        
-        ongoingUploadsList.addClass('mx-1');
+
+        upcomingUploadsList.addClass('mx-1');
         const h1 = $('<h1>');
         h1.addClass('text-start mb-1 ms-1');
         h1.css('font-size', '15px');
         h1.css('font-weight', '500');
         h1.css('color', '#3068BC');
         h1.text('Yüklenen Dosyalar');
-        ongoingUploadsList.append(h1);
+        upcomingUploadsList.append(h1);
 
         const files = event.target.files;
-      
+
         for (const file of files) {
-          const progressBar = createProgressBar(file);
-          upload = {
-            id: Math.random().toString(36).substr(2, 9),
-            inProgress: true,
-          }
-        uploadsInProgress.add(upload);
-
-      
-          // Create the list item for this file
-          const progressTitle = $('<li>').addClass('list-group-item border-0 px-0')
-            .html(`<div class="d-flex justify-content-between mb-2">
-                        <span class="d-flex align-items-center">
-                            <img src="../assets/img/mediaManagement/gallery.svg" alt="Gallery" class="me-2">
-                            <p class="text m-0" style="font-size: 14px; font-weight: 500;">${file.name}</p>
-                        </span>
-                        <span class="d-flex align-items-center cancel-upload" id="cancel-upload">
-                            <img src="../assets/img/mediaManagementR/close_small.svg" id="cancel-icon" alt="Cancel" data-file-id="${file.id}">
-                        </span>
-                    </div>`);
-
-
-        progressTitle.find('.cancel-upload').on("click", function(event) {
-            // const updatedFiles = Array.from(fileInput.files).filter((f) => f !== file);
-            // fileInput.files = new FileList(updatedFiles, fileInput.name);
-            // Remove the list item
-            canceledFiles.add(file);
-            progressTitle.remove();
-            progressBar.remove();
-        });
-      
-        
-        $('#ongoing-uploads').append(progressTitle);
-        $('#ongoing-uploads').append(progressBar);
-
-          let progress = 0;
-          const progressInterval = setInterval(() => {
-            uploadInProgress = true;
-            progress += 17;
-            if (progress <= 100) {
-              updateProgressBar(progressBar, progress);
-            } else {
-              
-              clearInterval(progressInterval);
-              progressTitle.remove();
-              progressBar.remove();
-              h1.remove();
-
-              if (!canceledFiles.has(file)) {
-                upload.inProgress = false;
-                progressTitle.find('#cancel-icon').attr('src', '../assets/img/mediaManagementR/trash-can.svg');
-                completedUploadsList.append(progressTitle);
-                progressTitle.find('#cancel-icon').on('click', function () {
-                    canceledFiles.add(file);
-                    progressTitle.remove();
-                });
-              }
+            //const progressBar = createProgressBar(file);
+            upload = {
+              id: Math.random().toString(36).substr(2, 9),
+              inProgress: true,
             }
-          }, 500);
-        }
-      });
+            uploadsInProgress.add(upload);
+            
+            // Create the list item for this file
+            const fileItemTitle = $('<li>').addClass('list-group-item border-0 px-0')
+                .html(`<div class="d-flex justify-content-between mb-2">
+                            <span class="d-flex align-items-center">
+                                <img src="../assets/img/mediaManagement/gallery.svg" alt="Gallery" class="me-2">
+                                <p class="text m-0" style="font-size: 14px; font-weight: 500;">${file.name}</p>
+                            </span>
+                            <span class="d-flex align-items-center cancel-upload" id="cancel-upload">
+                                <img src="../assets/img/mediaManagementR/close_small.svg" id="cancel-icon" alt="Cancel" data-file-id="${file.id}">
+                            </span>
+                        </div>
+                        <div class="progress" style="display:none; height: 6px; border-radius: 2px; margin-bottom: 10px;" id="progress-bar-${file.id}">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>`);
 
-      $('#cancel-button').on('click', function () {
-        ongoingUploadsList.empty();
-        canceledFiles.clear();
-        upload.inProgress = false;
-        completedUploadsList.empty();
-    });
-        
+            fileItemTitle.find('.cancel-upload').on("click", function(event) {
+                // const updatedFiles = Array.from(fileInput.files).filter((f) => f !== file);
+                // fileInput.files = new FileList(updatedFiles, fileInput.name);
+                // Remove the list item
+                canceledFiles.add(file);
+                fileItemTitle.remove();
+                //progressBar.remove();
+            });
+            
+            $('#upcoming-uploads').append(fileItemTitle);
+        }
+
+        $('#cancel-button').on('click', function () {
+            upcomingUploadsList.empty();
+            canceledFiles.clear();
+            upload.inProgress = false;
+            completedUploadsList.empty();
+        });
+
         $('#save-button').on('click', function (event) {
+            event.preventDefault();
+            $('#progress-bar-' + file.id).show();
             const falses = Array.from(uploadsInProgress).filter((upload) => !upload.inProgress);
-            console.log(falses);
             if (!falses) {
                 alert('Upload operation in progress. Wait for it to complete.');
                 return;
@@ -184,35 +158,46 @@ $(window).on("load", function() {
                 alert('No files to save.');
                 return;
             }
-    
+        
             const formDataFolder = new FormData();
             const formDataPlaylist = new FormData();
             for (let i = 0; i < filesToSave.length; i++) {
                 if(filesToSave[i].type.startsWith("video")) {  
                     const duration = getVideoDuration(filesToSave[i]);
-                    console.log(duration);
                     formDataFolder.append('duration', duration);
                     formDataPlaylist.append('duration', duration);
+                } else {
+                    formDataFolder.append('duration', 0);
+                    formDataPlaylist.append('duration', 0);
                 }
                 formDataFolder.append('uploadedFiles', filesToSave[i]);
                 formDataPlaylist.append('selectedFile', filesToSave[i]);
-
+        
             }
             formDataFolder.append('uploadFolderName', $("#uploadFolderSelect").val());
             formDataPlaylist.append('uploadPlaylistName', $("#uploadPlaylistSelect").val());
             formDataPlaylist.append('folderName', $("#uploadFolderSelect").val()); 
-            
-            uploadFiles(formDataFolder);
+        
+            // Create a progress bar element
+            const progressBar = document.createElement('div');
+            progressBar.classList.add('progress');
+            progressBar.innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>';
+            document.body.appendChild(progressBar);
+        
+            // Pass a callback function to uploadFiles that updates the progress bar
+            uploadFiles(formDataFolder, function(percentComplete) {
+                updateProgressBar(progressBar, percentComplete);
+            });
+        
             if($("#uploadPlaylistSelect").val() != "(İsteğe Bağlı))")
                 addContentToPlaylist(formDataPlaylist);
-
-            completedUploadsList.empty();
         });
-
+    });
+        
     function updateProgressBar(progressBar, progress) {
-      const progressBarInner = progressBar.querySelector('.progress-bar');
-      progressBarInner.style.width = progress + '%';
-      progressBarInner.setAttribute('aria-valuenow', progress);
+        const progressBarInner = progressBar.querySelector('.progress-bar');
+        progressBarInner.style.width = progress + '%';
+        progressBarInner.setAttribute('aria-valuenow', progress);
     }
 
     $('#baseFolderBtn').on('click', function () {
@@ -237,6 +222,45 @@ $(window).on("load", function() {
         }
     });
 });
+
+async function uploadFiles(formdata, progressCallback) {
+    try {
+        const response = await $.ajax({
+            url: 'http://127.0.0.1:3000/uploadFiles',
+            method: 'POST',
+            data: formdata,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                const xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(evt) {
+                    if (evt.lengthComputable) {
+                        const percentComplete = evt.loaded / evt.total * 100;
+                        console.log('Progress:', percentComplete);
+                        progressCallback(percentComplete);
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function (data, textStatus, xhr) {
+                if (xhr.status === 200) {
+                    if (data.success) {
+                        console.log('Upload successful:', data.message);
+                    } else {
+                        console.error('Upload failed:', data.message);
+                    }
+                } else {
+                    console.error('Upload failed with status:', xhr.status);
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error('Upload error:', textStatus, errorThrown);
+            }
+        });
+    } catch (error) {
+        console.error('Upload error:', error);
+    }
+}
 
 async function addContentToPlaylist(formdata) {
     try {
@@ -304,33 +328,7 @@ async function updateFolder(folderNameOptions, folderName, folderColor) {
     }
 }
 
-async function uploadFiles(formdata) {
-    try {
-        const response = await $.ajax({
-            url: 'http://127.0.0.1:3000/uploadFiles',
-            method: 'POST',
-            data: formdata,
-            processData: false,
-            contentType: false,
-            success: function (data, textStatus, xhr) {
-                if (xhr.status === 200) {
-                    if (data.success) {
-                        // File upload was successful
-                    } else {
-                        console.error('Upload failed:', data.message);
-                    }
-                } else {
-                    console.error('Upload failed with status:', xhr.status);
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                console.error('Upload error:', textStatus, errorThrown);
-            }
-        });
-    } catch (error) {
-        console.error('Upload error:', error);
-    }
-}
+
 
 function createFolder(folderName, folderColor) {
     $.ajax({
@@ -593,8 +591,10 @@ function showImage(imageDiv, followMouse, folderName, fileName) {
             
             imageDiv.css('display', 'block');
             $(document).on('mousemove', followMouse);
-            
-  
+        }
+    } catch (error) {
+        console.error('Get media error:', error);
+    }
 }
   
 function hideImage(imageDiv, followMouse) {
