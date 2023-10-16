@@ -1,8 +1,9 @@
-import { currentPlaylistName } from "./mediaManagement.js";
 $(window).on("load", function(event) {
     event.preventDefault();
     fetchFolders();
     var uploadInProgress = false;
+
+    var currentXhr = null;
 
     getDeviceStorageInfo(function (storageInfo) {
         // console.log('Used storage: ' + storageInfo.usedStorage);
@@ -99,12 +100,17 @@ $(window).on("load", function(event) {
         h1.css('font-size', '15px');
         h1.css('font-weight', '500');
         h1.css('color', '#3068BC');
-        h1.text('Yüklenen Dosyalar');
+        h1.text('Seçilen Dosyalar');
         upcomingUploadsList.append(h1);
 
         files = event.target.files;
 
         const fileProgressBars = [];
+
+        function updateFileCountText() {
+            const fileCountText = $('#count');
+            fileCountText.text(`${fileInput.files.length} selected`);
+        }
 
         $("#count").text(files.length + " Adet Dosya Seçildi");
 
@@ -133,11 +139,20 @@ $(window).on("load", function(event) {
             }
             uploadsInProgress.add(upload);
 
+            let typeSvg = "";
+            console.log(file.type);
+            if (file.type.startsWith("image")) {
+                typeSvg = "../assets/img/mediaManagement/gallery.svg";
+            } else if (file.type.startsWith("video")) {
+                typeSvg = "../assets/img/mediaManagement/video-square.svg";
+            }
+
+
             let fileItem = $('<div>');
             fileItem.attr('id', 'item-' + file.name);
             fileItem.append(`<div class="d-flex justify-content-between mb-2">
                                 <span class="d-flex align-items-center">
-                                    <img src="../assets/img/mediaManagement/gallery.svg" alt="Gallery" class="me-2">
+                                    <img src="${typeSvg}" alt="Gallery" class="me-2">
                                     <p class="text m-0" style="font-size: 14px; font-weight: 500;">${file.name}</p>
                                 </span>
                                 <span class="d-flex align-items-center cancel-upload" id="cancel-upload">
@@ -150,7 +165,6 @@ $(window).on("load", function(event) {
             const fileItemTitle = $('<li>').addClass('list-group-item border-0 px-0')
             fileItem.append(progress);
             fileItemTitle.append(fileItem);
-            
 
             fileProgressBars.push({ file, progress, fileItem });
 
@@ -166,11 +180,15 @@ $(window).on("load", function(event) {
             $('#upcoming-uploads').append(fileItemTitle);
         }
 
-        $('#cancel-button').on('submit', function () {
-            upcomingUploadsList.empty();
+        $('#cancel-button').on('click', function () {
             canceledFiles.clear();
             upload.inProgress = false;
             upcomingUploadsList.empty();
+
+            abortUpload();
+
+            $('#uploadDiv2-2').hide();
+            $('#uploadDiv2-3').hide();
         });
 
         $('#uploadForm').on('submit', function (event) {
@@ -180,6 +198,7 @@ $(window).on("load", function(event) {
 
         $('#save-button').on('click', function (event) {
             event.preventDefault();
+            $('#save-button').attr('disabled', true);
             console.log(fileProgressBars);
             for (const { file, progress, fileItem } of fileProgressBars) {
 
@@ -210,12 +229,16 @@ $(window).on("load", function(event) {
     });
 
     function uploadFile(file, folderName, duration, progress) {
+        if (currentXhr) {
+            currentXhr.abort();
+        }
+
         const formData = new FormData();
         formData.append('uploadFolderName', folderName);
         formData.append('uploadedFiles', file);
         formData.append('duration', duration);
 
-        $.ajax({
+        currentXhr = $.ajax({
             url: 'http://127.0.0.1:3000/uploadFiles',
             type: 'POST',
             data: formData,
@@ -237,9 +260,19 @@ $(window).on("load", function(event) {
                 return xhr;
             },
             success: function () {
-                return false;
+                currentXhr = null; // Reset the currentXhr when the request is complete
             },
+            abort: function () {
+                return false;
+            }
         });
+    }
+
+    function abortUpload() {
+        if (currentXhr) {
+            currentXhr.abort();
+            currentXhr = null; // Reset the currentXhr
+        }
     }
 
     function checkAllProgressBarsComplete() {
@@ -385,8 +418,6 @@ async function updateFolder(folderNameOptions, folderName, folderColor) {
     }
 }
 
-
-
 function createFolder(folderName, folderColor) {
     $.ajax({
         url: 'http://127.0.0.1:3000/createFolder',
@@ -474,11 +505,16 @@ async function fetchFolders() {
                     displayInModalOptions(folderName);
                 });
 
-                folderTopLine.find('#folder-delete').on('click', function () {
-                    const foldername = folderName;
-                    const formData = new FormData();
-                    formData.append('foldername', foldername);
-                    deleteFolder(formData);
+                folderTopLine.find('#folder-delete').on('click', async function () {
+                    const folderName = $(this).data('folder');
+                    const isFolderEmpty = await isFolderEmpty(folderName);
+                    if (isFolderEmpty) {
+                        const data = new FormData();
+                        data.append('foldername', folderName);
+                        await deleteFolder(data);
+                    } else {
+                        alert('Klasör boş değil.');
+                    }
                 });
 
                 folder.append(folderTopLine);
@@ -656,6 +692,19 @@ function showImage(imageDiv, followMouse, folderName, fileName) {
 function hideImage(imageDiv, followMouse) {
   imageDiv.css('display', 'none');
   $(document).off('mousemove', followMouse);
+}
+
+async function isFolderEmpty(folderName) {
+    try {
+        const response = await fetch(`http:////127.0.0.1:3000/getFolderContents?folderName=${folderName}`);
+        const data = await response.json();
+        if (data.success) {
+            return true;
+        }
+    } catch (error) {
+        console.error('Get folder contents error:', error);
+    }
+    return false;
 }
 
 async function showFolderContents(folderName) {
