@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link href="/node_modules/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../assets/css/mediaManagement.css" rel="stylesheet">
+    <link href="../assets/css/dashboard.css" rel="stylesheet">
     <link href="../assets/css/common.css" rel="stylesheet">
 </head>
 <body>
@@ -23,55 +24,75 @@
     </header>
     
     <div class="row d-flex g-0">
-        <div class="d-flex flex-column flex-shrink-0" style="width: 320px;" id="sidebar">
-            <ul class="nav nav-pills flex-column p-4">
-              <li class="nav-item">
-                <div class="input-group w-100">
-                    <span class="input-group-addon align-items-center d-flex" id="search-addon">
-                        <img src="../assets/img/mediaManagement/search.svg" alt="Search" class="me-2">
-                    </span>
-                    <input class="form-control border-0" type="search" placeholder="Arama Yap" aria-label="Search" id="search-form">
-                </div>     
-              </li>
-              <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="dashboard.html"  style="background-color: #04A3DA; color: white;">
-                    <img src="../assets/img/mediaManagement/dashboard.svg" alt="Dashboard" class="me-2" style="filter: invert(100%);">
-                    Dashboard
-                </a>
-              </li>
-              <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="./mediaManagement.html">
-                    <img src="../assets/img/mediaManagement/media-management.svg" alt="Media Management" class="me-2">
-                    Medya Yönetimi
-                </a>
-              </li>
-              <li style="display: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                    <img src="../assets/img/mediaManagement/system-info.svg" alt="System Info" class="me-2">
-                    Sistem Bilgisi
-                </button>
-              </li>
-              <li style="display: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                    <img src="../assets/img/mediaManagement/memory-management.svg" alt="Memory Management" class="me-2">
-                    Bellek Yönetimi
-                </button>
-              </li>
-              <li>
-                <a class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" href="./fileManagement.html">
-                    <img src="../assets/img/mediaManagement/file-management.svg" alt="File Management" class="me-2">
-                    Dosya Yönetimi
-                </a>
-              </li>
-            </ul>
-        </div>
-        <div class="col-md px-0" id="main-content-div">
-            <div class="row d-flex flex-column px-3 pt-3 mx-0" style="height: 100vh;">
-                <div class="col-md-12 p-4 bg-white rounded mb-3">
+      <div class="d-flex flex-column flex-shrink-0" style="width: 320px;" id="sidebar">
+        <ul class="nav nav-pills flex-column p-4">
+          <li class="nav-item">
+            <div class="input-group">
+                <span class="input-group-addon align-items-center" id="search-addon">
+                    <img id="sidebar-svg" src="../assets/img/mediaManagement/search.svg" alt="Search" class="me-2">
+                </span>
+                <input class="form-control border-0" type="search" placeholder="Arama Yap" aria-label="Search" id="search-form">
+            </div>  
+          </li>
+          <li>
+            <a class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" href="dashboard.html">
+                <img id="sidebar-svg" src="../assets/img/mediaManagement/dashboard.svg" alt="Dashboard" class="me-2">
+                <span class="">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" href="./mediaManagement.html">
+                <img id="sidebar-svg" src="../assets/img/mediaManagement/media-management.svg" alt="Media Management" class="me-2">
+                <span class="">Medya Yönetimi</span>
+            </a>
+          </li>
+          <li style="display: none;">
+            <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button">
+                <img id="sidebar-svg" src="../assets/img/mediaManagement/system-info.svg" alt="System Info" class="me-2">
+                <span class="">Sistem Bilgisi</span>
+            </button>
+          </li>
+          <li style="display: none;">
+            <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button">
+                <img id="sidebar-svg" src="../assets/img/mediaManagement/memory-management.svg" alt="Memory Management" class="me-2">
+                <span class="">Bellek Yönetimi</span>
+            </button>
+          </li>
+          <li>
+            <a class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" href="./fileManagement.html">
+                <img id="sidebar-svg" src="../assets/img/mediaManagement/file-management.svg" alt="File Management" class="me-2">
+                <span class="">Dosya Yönetimi</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+        <div class="col px-0" id="main-content-div">
+            <div class="container-fluid py-4 mx-0">
+              <div class="row px-4 mb-4" style="height: 46%;">
+                <div class="col d-flex flex-column bg-white p-3 me-4">
+                  <div class="col" id="time">
+
+                  </div>
+                  <div class="col" id="date">
+                    
+                  </div>
                 </div>
+                <div class="col bg-white p-3" id="cpu-usage">
+                  2 of 4
+                </div>
+              </div>
+              <div class="row px-4" style="height: 46%;">
+                <div class="col bg-white p-3 me-4" id="memory-usage">
+                  3 of 4
+                </div>
+                <div class="col bg-white p-3" id="disk-usage">
+                  4 of 4
+                </div>
+              </div>
             </div>
         </div>
     </div>
+    <script src="../assets/js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>

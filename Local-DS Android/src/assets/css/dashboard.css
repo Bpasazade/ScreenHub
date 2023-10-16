@@ -1,0 +1,7 @@
+#main-content-div {
+    height: 92vh;
+}
+
+.row > .col {
+    border-radius: 0.375rem;
+}
