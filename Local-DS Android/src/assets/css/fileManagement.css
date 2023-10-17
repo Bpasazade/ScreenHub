@@ -128,6 +128,26 @@ tr:hover > td:last-child {
     z-index: 1;
 }
 
+#fileManagementFileList {
+    max-height: 473px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+/* #folder-thead > tr {
+    display: block;
+    position: relative;
+    width: 100% !important
+}
+
+#folder-tbody {
+    display: block;
+    height: 260px;
+    width: 100%;
+    overflow: auto;
+    overflow-x: hidden;
+} */
+
 input[type="color"]:first-child {
     padding: 0;
     margin: 0;
