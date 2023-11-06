@@ -6,7 +6,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    
+    <script src="/node_modules/chart.js/dist/chart.umd.js"></script>
+
     <link rel='icon' href='/src/assets/img/favicon.ico' type='image/x-icon' sizes="16x16" />
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -67,28 +68,129 @@
         </ul>
       </div>
       <div class="col px-0" id="main-content-div">
-          <div class="container-fluid py-4 mx-0">
-            <div class="row px-4 mb-4" style="height: 46%;">
-              <div class="col d-flex flex-column bg-white p-3 me-4">
-                <div class="col" id="time">
+            <div class="container-fluid py-4 mx-0">
+              <div class="col-md-12 pt-4 px-4 rounded mb-4">
+                <div class="d-flex flex-column justify-content-start">
+                    <div class="d-flex mb-3 align-items-center">
+                        <h1 id="companyName" class="text me-2 mb-0" style="font-size: 26px; font-weight: 600;">Ankara</h1>
+                          <!-- edit button -->
+                          <button id="editButton" class="btn btn-primary rounded p-1" type="button" data-bs-toggle="modal" data-bs-target="#editModal" style="background-color: #FFA800; border: none; width: 20px; height: 20px; padding: 0px;">
+                            <img src="../assets/img/dashboard/edit.svg" alt="Edit" style="width: 9px; height: 9px;">
+                          </button>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <h1 class="text mb-0" style="font-size: 21px; font-weight: 300;">Ekran Yönetim Sistemi</h1>
+                      <h1 id="time" class="text mb-0" style="font-size: 18px; font-weight: 400; color: #B1B5C3"></h1>
+                    </div>
+                </div>
+            </div>
 
+            <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
+            <div class="row px-4 mb-3" style="height: 53%;">
+              <!-- CPU -->
+              <div class="col bg-white p-3 me-4 justify-content-between flex-column d-flex" id="cpu-usage">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex flex-column mt-2">
+                    <h1 class="text mb-2" style="font-size: 20px; font-weight: 400;"><strong>CPU</strong> İstatistikleri</h1>
+                   
+                    <div class="d-flex">
+                      <h1 id="cpuUsagePercentage" class="text text-white py-2 px-3 m-0 rounded-2 me-1" style="font-size: 12px; font-weight: 500; background-color: #05AF07;">Percentage</h1>
+                      <div id="cpuHeatDiv" class="d-flex py-2 px-2 m-0 rounded-2 rounded">
+                        <span>
+                          <img id="cpuThermometer" src="../assets/img/dashboard/thermometer.svg" alt="CPU" class="me-2">
+                        </span>
+                        <h1 id="cpuHeat" class="text mb-0" style="font-size: 12px; font-weight: 500;"></h1>
+                      </div>
+                    </div>
+                  </div>
+                  <span>
+                    <img src="../assets/img/dashboard/chip.svg" alt="CPU" class="me-2">
+                  </span>
                 </div>
-                <div class="col" id="date">
-                  
+                <div class="d-flex justify-content-center my-3" style="position: relative; width: 100%; height: 300px">
+                  <canvas id="cpuDonut"></canvas>
+                </div>
+                <div id="cpuAlert" class="d-flex justify-content-center p-3 rounded" style="background-color: #FF222208;">
+                  <span>
+                    <img src="../assets/img/dashboard/warning-red.svg" alt="Warning" class="me-2">
+                  </span>
+                  <h1 id="cpuAlertText" class="text text-danger mb-0" style="font-size: 16px; font-weight: 500;">CPU Sıcaklığı Yüksek</h1>
                 </div>
               </div>
-              <div class="col bg-white p-3" id="cpu-usage">
-                2 of 4
+              <!-- MEMORY -->
+              <div class="col d-flex flex-column px-0 me-4 ">
+                <div class="col bg-white p-3 rounded d-flex flex-column justify-content-between" id="ram-usage">
+                  <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-column mt-2">
+                      <h1 class="text mb-2" style="font-size: 20px; font-weight: 400;"><strong>RAM</strong> İstatistikleri</h1>
+                     
+                      <div class="d-flex">
+                        <h1 id="memoryUsagePercentage" class="text text-white py-2 px-3 m-0 rounded-2 me-1" style="font-size: 12px; font-weight: 500; background-color: #B82FE8;">Percentage</h1>                   
+                      </div>
+                      
+                    </div>
+                    <span>
+                      <img src="../assets/img/dashboard/ram.svg" alt="CPU" class="me-2" style="width: 27px; height: 27px;">
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-center my-3" style="position: relative; width: 100%; height: 300px;">
+                    <canvas id="memoryDonut"></canvas>
+                  </div>
+                  <div id="memoryAlert" class="d-flex justify-content-center p-3 rounded" style="visibility: hidden; background-color: #FF222208;">
+                    <span>
+                      <img src="../assets/img/dashboard/warning-red.svg" alt="Warning" class="me-2">
+                    </span>
+                    <h1 id="memoryAlertText" class="text text-danger mb-0" style="font-size: 16px; font-weight: 500;"></h1>
+                  </div>
+                </div>
+              </div>
+              <!-- DISK --> 
+              <div class="col bg-white p-3 rounded d-flex flex-column justify-content-between" id="disk-usage">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex flex-column mt-2">
+                    <h1 class="text mb-2" style="font-size: 20px; font-weight: 400;"><strong>HDD</strong> İstatistikleri</h1>
+                   
+                    <div class="d-flex">
+                      <h1 id="diskUsagePercentage" class="text text-white py-2 px-3 m-0 rounded-2 me-1" style="font-size: 12px; font-weight: 500; background-color: #04A3DA;">Percentage</h1>                   
+                    </div>
+                  </div>
+                  <span>
+                    <img src="../assets/img/dashboard/hdd.svg" alt="CPU" class="me-2">
+                  </span>
+                </div>
+                <div class="d-flex justify-content-center my-3" style="position: relative; width: 100%; height: 300px;">
+                  <canvas id="diskDonut"></canvas>
+                </div>
+                <div id="diskAlert" class="d-flex justify-content-center p-3 rounded" style="background-color: #FF222208;">
+                  <span>
+                    <img src="../assets/img/dashboard/warning-red.svg" alt="Warning" class="me-2">
+                  </span>
+                  <!-- Disk is getting full -->
+                  <h1 id="memoryAlertText" class="text text-danger mb-0" style="font-size: 16px; font-weight: 500;">Disk Dolmak Üzere</h1>
+                </div>
               </div>
             </div>
-            <div class="row px-4" style="height: 46%;">
-              <div class="col bg-white p-3 me-4" id="memory-usage">
-                3 of 4
+            <div class="row px-4">
+              <div class="bg-white p-3 me-4 rounded" id="cpu-usage" style="width: 62%;">
+                <div class="col-md-12 bg-white rounded mb-4 py-1" id="fileManagementFileList">
+                  <h1 class="text mb-2" style="font-size: 20px; font-weight: 400;">Son Eklenenler</h1>
+                  <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
+                  <table class="table table-borderless" id="mediaTable" style="table-layout: fixed;">
+                      
+                      <tbody id="folder-tbody"></tbody>
+                  </table>
+                </div>    
+
               </div>
-              <div class="col bg-white p-3" id="disk-usage">
-                4 of 4
+              <div class="bg-white p-3 rounded" id="cpu-usage" style="width: 36%;">
+                <h1 class="text mb-2" style="font-size: 20px; font-weight: 400;">Son Girişler</h1>
+                <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
+                <ul id="lastVisitList" class="list-group">
+
+                </ul>
               </div>
-            </div>
+              
+            </div>  
           </div>
       </div>
     </div>
