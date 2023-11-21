@@ -521,13 +521,14 @@ async function fetchFolders() {
 
                 folderTopLine.find('#folder-delete').on('click', async function () {
                     const folderName = $(this).data('folder');
-                    const isFolderEmpty = await isFolderEmpty(folderName);
-                    if (isFolderEmpty) {
+                    const isFolderEmpty_ = await isFolderEmpty(folderName);
+                    if (!isFolderEmpty_) {
                         const data = new FormData();
                         data.append('foldername', folderName);
                         await deleteFolder(data);
                     } else {
-                        alert('Klasör boş değil.');
+                        $('.toast-body').text('Klasör boş değil. Lütfen klasörü boşaltın.');
+                        $('.toast').toast('show');
                     }
                 });
 
@@ -748,6 +749,34 @@ async function showFolderContents(folderName) {
                 checkBox.attr('name', 'selectedFiles');
                 td.append(checkBox);
                 tr.append(td);
+
+                const deleteButton = $('#deleteSelections');
+
+                checkBox.on('change', function() {
+                    if ($('input[name="selectedFiles"]:checked').length > 0) {
+                        deleteButton.css("visibility", "visible");
+                    } else {
+                        deleteButton.css("visibility", "hidden");
+                    }
+                });
+
+                deleteButton.on('click', function() {
+                    const selectedFiles = $('input[name="selectedFiles"]:checked').map(function() {
+                        return $(this).val();
+                    }).get();
+    
+                    // Now 'selectedFiles' is an array containing the values of the checked checkboxes
+                    // Implement your logic to delete these files here
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        const fileName = selectedFiles[i];
+                        const formData = new FormData();
+                        formData.append('filename', fileName);
+                        formData.append('foldername', folderName);
+                        deleteFile(formData);
+                    }
+    
+                    console.log('Selected files:', selectedFiles);
+                });
 
                 const imageDiv = $('<div>');
                 imageDiv.addClass('imageDiv');

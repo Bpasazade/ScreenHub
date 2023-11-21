@@ -21,11 +21,14 @@
     <header class="p-4" id="navbar">
         <div class="d-flex justify-content-between">
           <img src="../assets/img/mediaManagement/rubuplus-logo-dark.svg" alt="Logo" class=""><br>
+          <button class="btn border-0" data-bs-toggle="modal" data-bs-target="#shutdownModal" id="shutdownBtn">
+            <img src="../assets/img/mediaManagement/video-square-dark.svg" alt="Directbox Send" class="me-2">
+        </button>
         </div>
     </header>
     
     <div class="row d-flex g-0">
-      <div class="d-flex flex-column flex-shrink-0" style="width: 320px;" id="sidebar">
+      <div class="d-flex flex-column justify-content-between flex-shrink-0" style="width: 320px;" id="sidebar">
         <ul class="nav nav-pills flex-column p-4">
           <li class="nav-item">
             <div class="input-group">
@@ -66,6 +69,29 @@
             </a>
           </li>
         </ul>
+
+        <div>
+          <div aria-live="polite" aria-atomic="true" class="  position-relative" style="margin-bottom: 84px;">
+              <div class="toast-container p-3" id="toastPlacement" data-original-class="toast-container">
+              <div class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" style="background: #fff3cd;">
+                  <div class="d-flex">
+                      <div class="toast-body">
+                          <!-- Text -->
+                      </div>
+                  <button type="button" class="btn-close btn-close-dark me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+              </div>
+              </div>
+          </div>
+          <div class="d-flex justify-content-start p-4">
+              <button class="btn border-0" data-bs-toggle="modal" data-bs-target="#restartModal" id="restartBtn">
+                  <img src="../assets/img/common/logout.svg" alt="Directbox Send" class="me-2">
+              </button>
+              <button class="btn border-0" data-bs-toggle="modal" data-bs-target="#logoutModal" id="logoutBtn">
+                  <img src="../assets/img/mediaManagement/video-square-dark.svg" alt="Directbox Send" class="me-2">
+              </button>
+          </div>
+      </div>
       </div>
       <div class="col px-0" id="main-content-div">
             <div class="container-fluid py-4 mx-0">

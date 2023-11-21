@@ -1,4 +1,7 @@
 export var currentPlaylistName = "";
+var activePlaylistName = null;
+var activeTarget = null;
+var previousTarget = null;
 $(window).on("load", function() {
     fetchPlaylists();
 
@@ -18,7 +21,7 @@ $(window).on("load", function() {
 
     var forcePlaceholderSize = $( "#playlist-tbody" ).sortable( "option", "forcePlaceholderSize" );
 
-    $( "#playlist-tbody" ).sortable( "option", "forcePlaceholderSize", true );
+    $("#playlist-tbody").sortable( "option", "forcePlaceholderSize", true );
 
     const playlistThead = $('#playlist-thead');
     playlistThead.hide();
@@ -47,14 +50,46 @@ $(window).on("load", function() {
         await deletePlaylist(formData);
     });
 
+    $("#activePlaylistBtn").on("click", function (event) {
+        if (isPlaylistEmpty(activePlaylistName)) {
+            $('.toast-body').text('Playlist boş olduğu için aktif edilemez.');
+            $('.toast').toast('show');
+            return;
+        }
+
+        event.preventDefault();
+        if (previousTarget !== null) {
+            previousTarget[0].style.backgroundColor = "#F6F6F6";
+            previousTarget[0].style.border = "2px solid #DDDDDD";
+            previousTarget[0].children[0].children[0].attributes[0].value = "../assets/img/mediaManagement/note.svg";
+        }
+
+        previousTarget = activeTarget;
+
+        $("#activePlaylistBtn").attr("disabled", true);
+        activePlaylistName = currentPlaylistName;
+        activeTarget[0].style.backgroundColor = "#05AF071A";
+        activeTarget[0].style.border = "2px solid #05AF07";
+        activeTarget[0].children[0].children[0].attributes[0].value = "../assets/img/mediaManagement/note-green.svg";
+    });
+
     const playlistList = $("#playlistList");
     playlistList.on("click", ".playlist-button, .playlist-options-btn", async function (event) {
         const target = $(event.target);
+        if (target[0] === previousTarget[0]) {
+            $("#activePlaylistBtn").attr("disabled", true);
+        }
+        activeTarget = target;
+
         if (target.hasClass("playlist-button")) {
             $("#addMediaBtn").attr("disabled", false);
+            $('#deleteSelections').css("visibility", "hidden");
+            $("#activePlaylistBtn").css("visibility", "visible");
+            if (currentPlaylistName !== activePlaylistName) {
+                $("#activePlaylistBtn").attr("disabled", false);
+            }
             const playlistName = target.data("playlist");
             currentPlaylistName = target.data('playlist');
-            console.log(currentPlaylistName);
             
             playlistInitTxt.hide();
             playlistThead.show();
@@ -93,6 +128,21 @@ $(window).on("load", function() {
     });
 });
 
+async function isPlaylistEmpty(playlistName) {
+    try {
+        const response = await fetch(`http://127.0.0.1:3000/isPlaylistEmpty?playlistName=${playlistName}`);
+        const data = await response.json();
+        if (data.success) {
+            return data.empty;
+        } else {
+            console.error('Playlist empty check failed:', data.error);
+        }
+    }
+    catch (error) {
+        console.error('Playlist empty check error:', error);
+    }
+}
+
 async function createPlaylist(playlistName) {
     try {
         const response = await fetch('http://127.0.0.1:3000/createPlaylist', {
@@ -120,16 +170,27 @@ async function fetchPlaylists() {
         if (data.playlists) {
             const playlistList = $("#playlistList");
             playlistList.empty();
+            var activePlaylist = "Playlist1";
+
             data.playlists.forEach(playlistName => {
                 const playlist = $("<button>")
                     .addClass("btn list-group-item d-flex justify-content-between align-items-center playlist-button mb-3")
                     .attr("id", "playlistBtn")
                     .attr("data-playlist", playlistName)
-                    .html(`<span>
+                    .html(`<span style="pointer-events: none;">
                                 <img src="../assets/img/mediaManagement/note.svg" alt="Folder" width="24">
                                 <span class="ms-2" style="font-size: 14px; font-weight: 400;">` + playlistName + `</span>
                             </span>
                             <img src="../assets/img/mediaManagementR/more.svg" alt="Folder" width="24">`);
+
+                if (playlistName === activePlaylist) {
+                    activePlaylistName = playlistName;
+                    previousTarget = playlist;
+                    playlist.css("background", "#05AF071A");
+                    playlist.css("border", "2px solid #05AF07");
+                    playlist.find('img').eq(0).attr("src", "../assets/img/mediaManagement/note-green.svg");
+                }
+
                 playlist.on('click', function (event) {
                     event.preventDefault();
                     const playlistName = $(this).data('playlist');
@@ -393,103 +454,131 @@ async function showPlaylistContents(playlistName) {
             playlistTbody.empty();
           
             data.contents.forEach(content => {
-              const tr = $('<tr>');
-              tr.addClass('text-center');
-          
-              const td = $('<td>');
-              const checkBox = $('<input>');
-              checkBox.attr('type', 'checkbox');
-              checkBox.addClass('form-check-input');
-              checkBox.val(content.filename);
-              checkBox.attr('name', 'selectedFiles');
-              td.append(checkBox);
-              tr.append(td);
-          
-              const td2 = $('<td>');
-              td2.addClass("fileDesc");
-              td2.text(content.filename);
-              tr.append(td2);
-          
-              const td3 = $('<td>');
-              td3.addClass("fileDesc");
-              td3.text(content.delay + "s");
-              tr.append(td3);
-          
-              const td4 = $('<td>');
-              td4.addClass("fileDesc");
-              td4.text(content.mTime || "N/A");
-              tr.append(td4);
-          
-              const td5 = $('<td>');
-              td5.addClass("fileDesc");
-          
-              const div = $('<div>');
-              div.addClass('col d-flex justify-content-center align-items-center')
-                 .css('width', 'fit-content');
-          
-              const playMediaBtn = $(`<button class="btn shadow-0 d-flex justify-content-between align-items-center border-0" data-media="${content.filename}">
-                <span>
-                  <img src="../assets/img/mediaManagement/play-circle.svg" alt="Play" width="25">
-                </span>
-              </button>`);
-          
-              playMediaBtn.on('click', function (event) {
-                event.preventDefault();
-                const fileUrl = "uploads/" + content.foldername + "/" + content.filename;
-                const fileName = content.filename;
-                const fileType = fileName.substr((fileName.lastIndexOf('.') + 1));
-                console.log(fileUrl + "  " + fileType);
-                displayInModal(fileUrl, fileType, fileName);
-              });
-          
-              const deleteMediaBtn = $(`<button class="btn shadow-0 d-flex justify-content-between align-items-center border-0" data-media="${content.filename}">
-                <span>
-                  <img src="../assets/img/mediaManagement/trash-can.svg" alt="Trash Can" width="25">
-                </span>
-              </button>`);
-          
-              deleteMediaBtn.on('click', function (event) {
-                event.preventDefault();
-                const fileName = $(this).data('media');
-                console.log(fileName);
-                const formData = new FormData();
-                formData.append('filename', fileName);
-                formData.append('playlistname', currentPlaylistName);
-                deleteMedia(formData);
-              });
+                const tr = $('<tr>');
+                tr.addClass('text-center');
+            
+                const td = $('<td>');
+                const checkBox = $('<input>');
+                checkBox.attr('type', 'checkbox');
+                checkBox.addClass('form-check-input');
+                checkBox.val(content.filename);
+                checkBox.attr('name', 'selectedFiles');
+                td.append(checkBox);
+                tr.append(td);
 
-              const editMediaBtn = $(`<button class="btn shadow-0 d-flex justify-content-between align-items-center border-0" data-media="${content.filename}">
-                                            <span>
-                                                <img src="../assets/img/mediaManagement/message-edit.svg" alt="Edit" width="25">
-                                            </span>
-                                        </button>`);
-                                        
-                editMediaBtn.on('click', function (event) {
-                    editMediaModal();
+                const deleteButton = $('#deleteSelections');
+
+                checkBox.on('change', function() {
+                    if ($('input[name="selectedFiles"]:checked').length > 0) {
+                        deleteButton.css("visibility", "visible");
+                    } else {
+                        deleteButton.css("visibility", "hidden");
+                    }
                 });
 
+                deleteButton.on('click', function() {
+                    const selectedFiles = $('input[name="selectedFiles"]:checked').map(function() {
+                        return $(this).val();
+                    }).get();
+    
+                    // Now 'selectedFiles' is an array containing the values of the checked checkboxes
+                    // Implement your logic to delete these files here
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        const fileName = selectedFiles[i];
+                        const formData = new FormData();
+                        formData.append('filename', fileName);
+                        formData.append('playlistname', currentPlaylistName);
+                        deleteMedia(formData);
+                    }
+    
+                    console.log('Selected files:', selectedFiles);
+                });
+          
+                const td2 = $('<td>');
+                td2.addClass("fileDesc");
+                td2.text(content.filename);
+                tr.append(td2);
+            
+                const td3 = $('<td>');
+                td3.addClass("fileDesc");
+                td3.text(content.delay + "s");
+                tr.append(td3);
+            
+                const td4 = $('<td>');
+                td4.addClass("fileDesc");
+                td4.text(content.mTime || "N/A");
+                tr.append(td4);
+            
+                const td5 = $('<td>');
+                td5.addClass("fileDesc");
+            
+                const div = $('<div>');
+                div.addClass('col d-flex justify-content-center align-items-center')
+                    .css('width', 'fit-content');
+            
+                const playMediaBtn = $(`<button class="btn shadow-0 d-flex justify-content-between align-items-center border-0" data-media="${content.filename}">
+                    <span>
+                    <img src="../assets/img/mediaManagement/play-circle.svg" alt="Play" width="25">
+                    </span>
+                </button>`);
+            
+                playMediaBtn.on('click', function (event) {
+                    event.preventDefault();
+                    const fileUrl = "uploads/" + content.foldername + "/" + content.filename;
+                    const fileName = content.filename;
+                    const fileType = fileName.substr((fileName.lastIndexOf('.') + 1));
+                    console.log(fileUrl + "  " + fileType);
+                    displayInModal(fileUrl, fileType, fileName);
+                });
+            
+                const deleteMediaBtn = $(`<button class="btn shadow-0 d-flex justify-content-between align-items-center border-0" data-media="${content.filename}">
+                    <span>
+                    <img src="../assets/img/mediaManagement/trash-can.svg" alt="Trash Can" width="25">
+                    </span>
+                </button>`);
+            
+                deleteMediaBtn.on('click', function (event) {
+                    event.preventDefault();
+                    const fileName = $(this).data('media');
+                    console.log(fileName);
+                    const formData = new FormData();
+                    formData.append('filename', fileName);
+                    formData.append('playlistname', currentPlaylistName);
+                    deleteMedia(formData);
+                });
+
+                const editMediaBtn = $(`<button class="btn shadow-0 d-flex justify-content-between align-items-center border-0" data-media="${content.filename}">
+                                                <span>
+                                                    <img src="../assets/img/mediaManagement/message-edit.svg" alt="Edit" width="25">
+                                                </span>
+                                            </button>`);
+                                            
+                    editMediaBtn.on('click', function (event) {
+                        editMediaModal();
+                    });
+
+                    
+
+                $("#folderOptionsForm").on("submit", function(event) {
+                    event.preventDefault();
+                    updateFolder(currentPlaylistName, fileName);
+                });
+            
+                div.append(playMediaBtn);
+
+                // Add a separator between buttons
+                div.append('<div class="vr" style="width: 2px; color: #DDDDDD; height: 14px; align-self: center;"></div>');
+
+                div.append(editMediaBtn);
                 
-
-              $("#folderOptionsForm").on("submit", function(event) {
-                  event.preventDefault();
-                  updateFolder(currentPlaylistName, fileName);
-              });
-          
-              div.append(playMediaBtn);
-
-              // Add a separator between buttons
-              div.append('<div class="vr" style="width: 2px; color: #DDDDDD; height: 14px; align-self: center;"></div>');
-
-              div.append(editMediaBtn);
-              
-              // Add a separator between buttons
-              div.append('<div class="vr" style="width: 2px; color: #DDDDDD; height: 14px; align-self: center;"></div>');
-          
-              div.append(deleteMediaBtn);
-          
-              td5.append(div);
-              tr.append(td5);
-              playlistTbody.append(tr);
+                // Add a separator between buttons
+                div.append('<div class="vr" style="width: 2px; color: #DDDDDD; height: 14px; align-self: center;"></div>');
+            
+                div.append(deleteMediaBtn);
+            
+                td5.append(div);
+                tr.append(td5);
+                playlistTbody.append(tr);
             });
         }
     } catch (error) {

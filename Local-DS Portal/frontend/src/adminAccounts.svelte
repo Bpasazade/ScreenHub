@@ -205,7 +205,7 @@
         </div>
         <div class="col-md px-0" id="main-content-div">
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
-                <div class="col-md-12 p-4 bg-white rounded mb-4">
+                <!-- <div class="col-md-12 p-4 bg-white rounded mb-4">
                     <div class="d-flex justify-content-end">
                         <div class="col-md-6 d-flex justify-content-end">
                             <button class="btn bg-light me-2 media-content-button border-0" data-bs-toggle="modal" data-bs-target="#newUserModal">
@@ -216,7 +216,7 @@
                     </div>
                 </div>
 
-                <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
+                <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;"> -->
                 <div class="container mx-0 px-0">
                     <div class="col-md-12 px-4 bg-white rounded mb-4 py-1">
                         <table class="table table-borderless " id="mediaTable">
