@@ -1,19 +1,21 @@
 $(window).on("load", function() {
-    $("#shutdownBtn").on("click", function() {
+    console.log("Common.js");
+    $("#shutdownConfirm").on("click", function() {
         shutdown();
     });
 
-    $("#logoutBtn").on("click", function() {
+    $("#logoutConfirm").on("click", function() {
         logout();
     });
 
-    $("#restartBtn").on("click", function() {
+    $("#restartConfirm").on("click", function() {
         restart();
     });
 });
 
 // Shutdown
 function shutdown() {
+    console.log("Shutdown");
     $.ajax({
         url: "/shutdown",
         type: "POST",
@@ -28,6 +30,7 @@ function shutdown() {
 
 // Logout
 function logout() {
+    console.log("Logout");
     $.ajax({
         url: "/logout",
         type: "POST",
@@ -42,6 +45,7 @@ function logout() {
 
 // Restart
 function restart() {
+    console.log("Restart");
     $.ajax({
         url: "/restart",
         type: "POST",

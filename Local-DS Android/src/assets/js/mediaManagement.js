@@ -557,8 +557,6 @@ async function showPlaylistContents(playlistName) {
                         editMediaModal();
                     });
 
-                    
-
                 $("#folderOptionsForm").on("submit", function(event) {
                     event.preventDefault();
                     updateFolder(currentPlaylistName, fileName);
