@@ -22,7 +22,7 @@ The project is configured to run on Android. Follow these steps to set it up:
 1. Clone the GitHub repository:
 
     ```bash
-    git clone <repo-link>
+    git clone https://github.com/Bpasazade/local-ds.git
     ```
 
 2. Open the project in Android Studio and download the necessary dependencies.
