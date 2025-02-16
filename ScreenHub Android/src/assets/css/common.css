@@ -1,0 +1,185 @@
+@font-face {
+    font-family: 'Sofia-Pro-Black';
+    src: url('../Fonts/Sofia Pro Black Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Black-Italic';
+    src: url('../Fonts/Sofia Pro Black Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Bold';
+    src: url('../Fonts/Sofia Pro Bold Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Bold-Italic';
+    src: url('../Fonts/Sofia Pro Bold Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-ExtraLight';
+    src: url('../Fonts/Sofia Pro ExtraLight Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-ExtraLight-Italic';
+    src: url('../Fonts/Sofia Pro ExtraLight Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Light';
+    src: url('../Fonts/Sofia Pro Light Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Light-Italic';
+    src: url('../Fonts/Sofia Pro Light Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Medium';
+    src: url('../Fonts/Sofia Pro Medium Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Medium-Italic';
+    src: url('../Fonts/Sofia Pro Medium Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Regular';
+    src: url('../Fonts/Sofia Pro Regular Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Regular-Italic';
+    src: url('../Fonts/Sofia Pro Regular Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-SemiBold';
+    src: url('../Fonts/Sofia Pro SemiBold Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-SemiBold-Italic';
+    src: url('../Fonts/Sofia Pro SemiBold Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Thin';
+    src: url('../Fonts/Sofia Pro Thin Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-Thin-Italic';
+    src: url('../Fonts/Sofia Pro Thin Italic Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-UltraLight';
+    src: url('../Fonts/Sofia Pro UltraLight Az.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Sofia-Pro-UltraLight-Italic';
+    src: url('../Fonts/Sofia Pro UltraLight Italic Az.otf') format('opentype');
+}
+body {
+    padding: 0;
+    font-family: 'Sofia-Pro-Regular', sans-serif !important;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background-color: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+@media (max-width: 1325px) {
+    #sidebar {
+        width: 100px !important;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 75.5;
+        height: 100%;
+        background: #fff;
+        border-right: 1px solid #ddd;
+        transition: all 0.2s ease-in-out;
+        overflow: hidden;
+    }
+
+    #sidebar:hover {
+        width: 320px !important;
+        z-index: 1;
+    }
+
+    #sidebar a {
+        display: block !important;
+        width: 270px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    #sidebar div {
+        height: 50px !important;
+        transition: all 0.3s ease-in-out;
+    }
+
+    #sidebar div input {
+        display: block !important;
+    }
+
+    #sidebar:hover a span, #sidebar:hover div input {
+        display: initial !important;
+        opacity: 1;
+    }
+
+    #sidebar:hover #sidebar-svg {
+        margin-right: 0.375rem !important;
+    }
+
+    #sidebar:hover div #search-addon {
+        padding-right: 0.375rem !important;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    #sidebar a span {
+        opacity: 0;
+    }
+
+    #sidebar div input {
+        opacity: 0;
+    }
+
+    #sidebar a.active {
+        display: block !important;
+    }
+
+    #mediaTable td::before, th::before {
+        z-index: 0;
+    }
+
+    #main-content-div {
+        margin-left: 100px !important;
+    }
+
+    #search-addon {
+        border-top-right-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
+        padding-right: 0.75rem;
+    }
+
+    #sidebar-svg {
+        margin-right: 0rem !important;
+    }
+}
+
+/* For larger screens (from 576px and up) */
+@media (min-width: 1326px) {
+    #sidebar {
+        width: 320px; /* Adjust as needed */
+    }
+
+    #sidebar ul.components li a span {
+        display: inline !important;
+    }
+
+    #sidebar ul.components li a i {
+        font-size: 18px; /* Adjust as needed */
+    }
+}
